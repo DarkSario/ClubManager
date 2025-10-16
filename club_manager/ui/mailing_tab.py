@@ -20,12 +20,58 @@ class MailingTab(QtWidgets.QWidget, Ui_MailingTab):
 
     def send_mail(self):
         # Logique d'envoi de mail groupé
-        pass
+        # Vérifier que tous les champs sont remplis
+        if not self.editSubject or not hasattr(self, 'editSubject'):
+            QtWidgets.QMessageBox.warning(self, "Attention", "L'interface de mailing n'est pas complètement initialisée.")
+            return
+        
+        subject = self.editSubject.text() if hasattr(self, 'editSubject') else ""
+        body = self.textBody.toPlainText() if hasattr(self, 'textBody') else ""
+        
+        if not subject or not body:
+            QtWidgets.QMessageBox.warning(self, "Attention", "Veuillez remplir le sujet et le corps du message.")
+            return
+        
+        # Pour l'instant, juste un message d'information
+        QtWidgets.QMessageBox.information(
+            self,
+            "Envoi de mail",
+            "L'envoi de mail groupé nécessite la configuration d'un serveur SMTP.\n"
+            "Cette fonctionnalité sera implémentée prochainement.\n\n"
+            f"Sujet : {subject}\n"
+            f"Corps : {body[:100]}..."
+        )
 
     def preview_mail(self):
         # Afficher un aperçu du mail groupé
-        pass
+        subject = self.editSubject.text() if hasattr(self, 'editSubject') else ""
+        body = self.textBody.toPlainText() if hasattr(self, 'textBody') else ""
+        
+        if not subject and not body:
+            QtWidgets.QMessageBox.warning(self, "Attention", "Le sujet et le corps du message sont vides.")
+            return
+        
+        # Afficher un aperçu
+        preview = f"<h3>Aperçu du mail</h3>"
+        preview += f"<p><strong>Sujet :</strong> {subject}</p>"
+        preview += f"<p><strong>Corps :</strong></p>"
+        preview += f"<p>{body.replace(chr(10), '<br>')}</p>"
+        
+        QtWidgets.QMessageBox.information(self, "Aperçu", preview)
 
     def select_recipients(self):
         # Sélectionner les destinataires (ouvre un dialog)
-        pass
+        from club_manager.ui.mailing_recipients_dialog import MailingRecipientsDialog
+        
+        try:
+            dlg = MailingRecipientsDialog(self)
+            if dlg.exec_() == QtWidgets.QDialog.Accepted:
+                # Récupérer les destinataires sélectionnés
+                QtWidgets.QMessageBox.information(
+                    self,
+                    "Destinataires",
+                    "Les destinataires ont été sélectionnés.\n"
+                    "Cette fonctionnalité sera pleinement opérationnelle prochainement."
+                )
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(self, "Erreur", f"Erreur lors de la sélection des destinataires : {str(e)}")

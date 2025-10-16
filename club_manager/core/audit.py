@@ -13,3 +13,7 @@ def log_action(action, user, obj, details):
         "INSERT INTO audit (date, action, user, object, details) VALUES (?, ?, ?, ?, ?)",
         (datetime.now().isoformat(), action, user, obj, details)
     )
+
+def get_all_audit_entries():
+    db = Database.instance()
+    return db.query("SELECT * FROM audit ORDER BY date DESC")
