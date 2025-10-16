@@ -8,7 +8,6 @@ from PyQt5.QtWidgets import QMainWindow, QTabWidget, QAction, QFileDialog, QMess
 from PyQt5.QtGui import QIcon
 from club_manager.ui.members_tab import MembersTab
 from club_manager.ui.positions_tab import PositionsTab
-from club_manager.ui.sessions_tab import SessionsTab
 from club_manager.ui.cotisations_tab import CotisationsTab
 from club_manager.ui.custom_fields_tab import CustomFieldsTab
 from club_manager.ui.audit_tab import AuditTab
@@ -56,7 +55,6 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.tabs)
         self.members_tab = MembersTab()
         self.positions_tab = PositionsTab()
-        self.sessions_tab = SessionsTab()
         self.cotisations_tab = CotisationsTab()
         self.custom_fields_tab = CustomFieldsTab()
         self.audit_tab = AuditTab()
@@ -67,7 +65,6 @@ class MainWindow(QMainWindow):
 
         self.tabs.addTab(self.members_tab, "Membres")
         self.tabs.addTab(self.positions_tab, "Postes")
-        self.tabs.addTab(self.sessions_tab, "Sessions")
         self.tabs.addTab(self.cotisations_tab, "Cotisations")
         self.tabs.addTab(self.custom_fields_tab, "Champs personnalisés")
         self.tabs.addTab(self.exports_tab, "Exports")
@@ -144,10 +141,6 @@ class MainWindow(QMainWindow):
             pass
         try:
             self.cotisations_tab.refresh_cotisations()
-        except:
-            pass
-        try:
-            self.sessions_tab.refresh_sessions()
         except:
             pass
         # Ajouter d'autres rafraîchissements si nécessaire
