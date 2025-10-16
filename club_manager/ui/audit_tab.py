@@ -8,28 +8,123 @@ Dépendances : PyQt5, Ui_AuditTab généré par pyuic5 à partir de resources/ui
 """
 
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import Qt
 from club_manager.ui.audit_tab_ui import Ui_AuditTab
+import csv
+import os
 
 class AuditTab(QtWidgets.QWidget, Ui_AuditTab):
+    """Onglet de consultation du journal d'audit et gestion RGPD."""
+    
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        
         self.buttonExportAudit.clicked.connect(self.export_audit)
         self.buttonPurgeRGPD.clicked.connect(self.purge_rgpd)
         self.tableAudit.doubleClicked.connect(self.view_audit_entry)
+        
+        # Charger au démarrage
+        try:
+            self.refresh_audit()
+        except:
+            pass
 
     def export_audit(self):
-        # Exporter le journal d'audit (CSV/PDF)
-        pass
+        """Exporte le journal d'audit en CSV."""
+        from club_manager.core.audit import get_all_audit_entries
+        
+        file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
+            self,
+            "Exporter le journal d'audit",
+            os.path.expanduser("~/audit_export.csv"),
+            "Fichiers CSV (*.csv)"
+        )
+        
+        if not file_path:
+            return
+        
+        try:
+            entries = get_all_audit_entries()
+            if not entries:
+                QtWidgets.QMessageBox.information(self, "Export", "Aucune entrée d'audit à exporter.")
+                return
+            
+            with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
+                fieldnames = entries[0].keys()
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(entries)
+            
+            QtWidgets.QMessageBox.information(
+                self,
+                "Export réussi",
+                f"{len(entries)} entrée(s) d'audit exportée(s) vers :\n{file_path}"
+            )
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(self, "Erreur d'export", f"Erreur lors de l'export : {str(e)}")
 
     def purge_rgpd(self):
-        # Lancer la purge RGPD (suppression/anonymisation)
-        pass
+        """Lance la procédure de purge/anonymisation RGPD."""
+        reply = QtWidgets.QMessageBox.question(
+            self,
+            "Purge RGPD",
+            "La purge RGPD supprime ou anonymise les données personnelles anciennes.\n\n"
+            "Cette action est irréversible. Continuer ?",
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No
+        )
+        
+        if reply == QtWidgets.QMessageBox.Yes:
+            QtWidgets.QMessageBox.information(
+                self,
+                "Purge RGPD",
+                "La fonctionnalité de purge RGPD sera disponible dans une prochaine version.\n\n"
+                "Elle permettra de :\n"
+                "- Supprimer les membres inactifs depuis X années\n"
+                "- Anonymiser les données sensibles\n"
+                "- Purger l'historique d'audit ancien"
+            )
 
     def view_audit_entry(self):
-        # Afficher le détail d'une entrée d'audit
-        pass
+        """Affiche le détail d'une entrée d'audit."""
+        selected_items = self.tableAudit.selectedItems()
+        if not selected_items:
+            return
+        
+        row = selected_items[0].row()
+        
+        # Récupérer les informations de la ligne
+        date = self.tableAudit.item(row, 0).text() if self.tableAudit.item(row, 0) else ""
+        action = self.tableAudit.item(row, 1).text() if self.tableAudit.item(row, 1) else ""
+        user = self.tableAudit.item(row, 2).text() if self.tableAudit.item(row, 2) else ""
+        obj = self.tableAudit.item(row, 3).text() if self.tableAudit.item(row, 3) else ""
+        details = self.tableAudit.item(row, 4).text() if self.tableAudit.item(row, 4) else ""
+        
+        # Afficher dans une boîte de dialogue
+        msg_text = f"<h3>Détails de l'entrée d'audit</h3>"
+        msg_text += f"<p><b>Date :</b> {date}</p>"
+        msg_text += f"<p><b>Action :</b> {action}</p>"
+        msg_text += f"<p><b>Utilisateur :</b> {user}</p>"
+        msg_text += f"<p><b>Objet :</b> {obj}</p>"
+        msg_text += f"<p><b>Détails :</b> {details}</p>"
+        
+        msg = QtWidgets.QMessageBox(self)
+        msg.setWindowTitle("Détails de l'audit")
+        msg.setTextFormat(Qt.RichText)
+        msg.setText(msg_text)
+        msg.exec_()
 
     def refresh_audit(self):
-        # Recharge la table depuis la base
-        pass
+        """Recharge la table d'audit depuis la base de données."""
+        from club_manager.core.audit import get_all_audit_entries
+        
+        entries = get_all_audit_entries()
+        self.tableAudit.setRowCount(0)
+        
+        for row_idx, entry in enumerate(entries):
+            self.tableAudit.insertRow(row_idx)
+            self.tableAudit.setItem(row_idx, 0, QtWidgets.QTableWidgetItem(str(entry.get('date', ''))))
+            self.tableAudit.setItem(row_idx, 1, QtWidgets.QTableWidgetItem(str(entry.get('action', ''))))
+            self.tableAudit.setItem(row_idx, 2, QtWidgets.QTableWidgetItem(str(entry.get('user', ''))))
+            self.tableAudit.setItem(row_idx, 3, QtWidgets.QTableWidgetItem(str(entry.get('object', ''))))
+            self.tableAudit.setItem(row_idx, 4, QtWidgets.QTableWidgetItem(str(entry.get('details', ''))))
