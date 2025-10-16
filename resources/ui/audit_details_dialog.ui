@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AuditDetailsDialog</class>
+ <widget class="QDialog" name="AuditDetailsDialog">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0"><widget class="QLabel" name="labelDateTitle"><property name="text"><string>Date :</string></property></widget></item>
+     <item row="0" column="1"><widget class="QLabel" name="labelDate"/></item>
+     <item row="1" column="0"><widget class="QLabel" name="labelActionTitle"><property name="text"><string>Action :</string></property></widget></item>
+     <item row="1" column="1"><widget class="QLabel" name="labelAction"/></item>
+     <item row="2" column="0"><widget class="QLabel" name="labelUserTitle"><property name="text"><string>Utilisateur :</string></property></widget></item>
+     <item row="2" column="1"><widget class="QLabel" name="labelUser"/></item>
+     <item row="3" column="0"><widget class="QLabel" name="labelObjectTitle"><property name="text"><string>Objet :</string></property></widget></item>
+     <item row="3" column="1"><widget class="QLabel" name="labelObject"/></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTextEdit" name="textDetails">
+     <property name="readOnly"><bool>true</bool></property>
+     <property name="placeholderText"><string>Détails de l'action...</string></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation"><enum>Qt::Horizontal</enum></property>
+     <property name="standardButtons"><set>QDialogButtonBox::Ok</set></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

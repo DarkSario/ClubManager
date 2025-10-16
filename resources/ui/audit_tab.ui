@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AuditTab</class>
+ <widget class="QWidget" name="AuditTab">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutTop">
+     <item><widget class="QPushButton" name="buttonExportAudit"><property name="text"><string>Exporter le journal</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonPurgeRGPD"><property name="text"><string>Purge RGPD</string></property></widget></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="tableAudit">
+     <column>
+      <property name="text"><string>Date</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Action</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Utilisateur</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Objet</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Détail</string></property>
+     </column>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

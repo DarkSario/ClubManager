@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MailingTab</class>
+ <widget class="QWidget" name="MailingTab">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutTop">
+     <item><widget class="QPushButton" name="buttonSendMail"><property name="text"><string>Envoyer</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonPreviewMail"><property name="text"><string>Prévisualiser</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonSelectRecipients"><property name="text"><string>Sélection destinataires</string></property></widget></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTextEdit" name="textEditMail">
+     <property name="placeholderText"><string>Rédigez votre message ici...</string></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

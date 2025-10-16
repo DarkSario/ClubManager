@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CustomFieldsTab</class>
+ <widget class="QWidget" name="CustomFieldsTab">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutTop">
+     <item><widget class="QPushButton" name="buttonAddCustomField"><property name="text"><string>Ajouter</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonEditCustomField"><property name="text"><string>Modifier</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonDeleteCustomField"><property name="text"><string>Supprimer</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonExportCustomFields"><property name="text"><string>Exporter</string></property></widget></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="tableCustomFields">
+     <column>
+      <property name="text"><string>Nom</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Type</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Défaut</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Contraintes</string></property>
+     </column>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

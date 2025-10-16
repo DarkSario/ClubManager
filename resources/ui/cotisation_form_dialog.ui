@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CotisationFormDialog</class>
+ <widget class="QDialog" name="CotisationFormDialog">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0"><widget class="QLabel" name="labelMember"><property name="text"><string>Membre :</string></property></widget></item>
+     <item row="0" column="1"><widget class="QLineEdit" name="editMember"/></item>
+     <item row="1" column="0"><widget class="QLabel" name="labelSession"><property name="text"><string>Session :</string></property></widget></item>
+     <item row="1" column="1"><widget class="QLineEdit" name="editSession"/></item>
+     <item row="2" column="0"><widget class="QLabel" name="labelAmount"><property name="text"><string>Montant :</string></property></widget></item>
+     <item row="2" column="1"><widget class="QLineEdit" name="editAmount"/></item>
+     <item row="3" column="0"><widget class="QLabel" name="labelPaid"><property name="text"><string>Payé :</string></property></widget></item>
+     <item row="3" column="1"><widget class="QLineEdit" name="editPaid"/></item>
+     <item row="4" column="0"><widget class="QLabel" name="labelDatePaiement"><property name="text"><string>Date paiement :</string></property></widget></item>
+     <item row="4" column="1"><widget class="QDateEdit" name="datePaiement"><property name="calendarPopup"><bool>true</bool></property></widget></item>
+     <item row="5" column="0"><widget class="QLabel" name="labelMethod"><property name="text"><string>Méthode :</string></property></widget></item>
+     <item row="5" column="1"><widget class="QComboBox" name="comboMethod">
+      <item><property name="text"><string>Chèque</string></property></item>
+      <item><property name="text"><string>Espèce</string></property></item>
+      <item><property name="text"><string>ANCV</string></property></item>
+      <item><property name="text"><string>Virement</string></property></item>
+      <item><property name="text"><string>Autre</string></property></item>
+     </widget></item>
+     <item row="6" column="0"><widget class="QLabel" name="labelStatus"><property name="text"><string>Statut :</string></property></widget></item>
+     <item row="6" column="1"><widget class="QComboBox" name="comboStatus">
+      <item><property name="text"><string>Payé</string></property></item>
+      <item><property name="text"><string>En attente</string></property></item>
+      <item><property name="text"><string>Partiel</string></property></item>
+      <item><property name="text"><string>Relancé</string></property></item>
+     </widget></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation"><enum>Qt::Horizontal</enum></property>
+     <property name="standardButtons"><set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BackupRestoreDialog</class>
+ <widget class="QDialog" name="BackupRestoreDialog">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0"><widget class="QLabel" name="labelBackupPath"><property name="text"><string>Chemin du fichier de sauvegarde :</string></property></widget></item>
+     <item row="0" column="1"><widget class="QLineEdit" name="editBackupPath"/></item>
+     <item row="1" column="0" colspan="2"><widget class="QPushButton" name="buttonBrowse"><property name="text"><string>Parcourir...</string></property></widget></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation"><enum>Qt::Horizontal</enum></property>
+     <property name="standardButtons"><set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

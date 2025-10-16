@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AboutDialog</class>
+ <widget class="QDialog" name="AboutDialog">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="labelLogo">
+     <property name="text"><string>CLUB MANAGER</string></property>
+     <property name="alignment"><set>Qt::AlignCenter</set></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelVersion">
+     <property name="text"><string>Version 1.0.0</string></property>
+     <property name="alignment"><set>Qt::AlignCenter</set></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelCopyright">
+     <property name="text"><string>© 2025 DarkSario
+Licence libre, voir documentation.</string></property>
+     <property name="alignment"><set>Qt::AlignCenter</set></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTextBrowser" name="textCredits">
+     <property name="html">
+      <string notr="true">&lt;b&gt;Auteurs&lt;/b&gt;: DarkSario &amp; contributeurs&lt;br&gt;
+&lt;b&gt;Remerciements&lt;/b&gt;: Projet open-source inspiré par la communauté.&lt;br&gt;
+&lt;b&gt;Librairies&lt;/b&gt;: PyQt5, SQLite, etc.&lt;br&gt;&lt;br&gt;
+&lt;i&gt;Pour toute remarque ou bug, voir la documentation ou le dépôt GitHub.&lt;/i&gt;</string>
+     </property>
+     <property name="openExternalLinks"><bool>true</bool></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation"><enum>Qt::Horizontal</enum></property>
+     <property name="standardButtons"><set>QDialogButtonBox::Ok</set></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MailingRecipientsDialog</class>
+ <widget class="QDialog" name="MailingRecipientsDialog">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="labelInfo">
+     <property name="text"><string>Sélectionnez les destinataires du mailing :</string></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QListWidget" name="listRecipients">
+     <property name="selectionMode"><set>QAbstractItemView::MultiSelection</set></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation"><enum>Qt::Horizontal</enum></property>
+     <property name="standardButtons"><set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

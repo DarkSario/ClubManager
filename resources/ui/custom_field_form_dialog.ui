@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CustomFieldFormDialog</class>
+ <widget class="QDialog" name="CustomFieldFormDialog">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0"><widget class="QLabel" name="labelName"><property name="text"><string>Nom du champ :</string></property></widget></item>
+     <item row="0" column="1"><widget class="QLineEdit" name="editName"/></item>
+     <item row="1" column="0"><widget class="QLabel" name="labelType"><property name="text"><string>Type :</string></property></widget></item>
+     <item row="1" column="1"><widget class="QComboBox" name="comboType">
+      <item><property name="text"><string>Texte</string></property></item>
+      <item><property name="text"><string>Numérique</string></property></item>
+      <item><property name="text"><string>Date</string></property></item>
+      <item><property name="text"><string>Choix</string></property></item>
+      <item><property name="text"><string>Booléen</string></property></item>
+     </widget></item>
+     <item row="2" column="0"><widget class="QLabel" name="labelDefault"><property name="text"><string>Valeur par défaut :</string></property></widget></item>
+     <item row="2" column="1"><widget class="QLineEdit" name="editDefault"/></item>
+     <item row="3" column="0"><widget class="QLabel" name="labelOptions"><property name="text"><string>Options (si Choix) :</string></property></widget></item>
+     <item row="3" column="1"><widget class="QLineEdit" name="editOptions"><property name="enabled"><bool>false</bool></property><property name="placeholderText"><string>Séparés par virgules</string></property></widget></item>
+     <item row="4" column="0"><widget class="QLabel" name="labelConstraints"><property name="text"><string>Contraintes :</string></property></widget></item>
+     <item row="4" column="1"><widget class="QLineEdit" name="editConstraints"/></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation"><enum>Qt::Horizontal</enum></property>
+     <property name="standardButtons"><set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

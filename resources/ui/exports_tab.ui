@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ExportsTab</class>
+ <widget class="QWidget" name="ExportsTab">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutTop">
+     <item><widget class="QPushButton" name="buttonExportCSV"><property name="text"><string>Exporter CSV</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonExportPDF"><property name="text"><string>Exporter PDF</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonSelectFields"><property name="text"><string>Champs à exporter</string></property></widget></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="tablePreview"/>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BackupTab</class>
+ <widget class="QWidget" name="BackupTab">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutTop">
+     <item><widget class="QPushButton" name="buttonBackup"><property name="text"><string>Sauvegarder</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonRestore"><property name="text"><string>Restaurer</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonExportZip"><property name="text"><string>Exporter (zip)</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonImportZip"><property name="text"><string>Importer (zip)</string></property></widget></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelLastBackup">
+     <property name="text"><string>Dernière sauvegarde : inconnue</string></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

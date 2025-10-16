@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ThemingTab</class>
+ <widget class="QWidget" name="ThemingTab">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutTop">
+     <item><widget class="QPushButton" name="buttonChooseTheme"><property name="text"><string>Choisir un thème</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonImportLogo"><property name="text"><string>Importer un logo</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonPreviewTheme"><property name="text"><string>Prévisualiser</string></property></widget></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelPreview">
+     <property name="text"><string>Aperçu du thème ici</string></property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

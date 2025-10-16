@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RgpdPurgeDialog</class>
+ <widget class="QDialog" name="RgpdPurgeDialog">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="labelWarning">
+     <property name="text">
+      <string notr="true">&lt;b&gt;Attention !&lt;/b&gt;&lt;br&gt;Cet outil lance une purge/anonymisation RGPD irréversible.&lt;br&gt;Êtes-vous sûr de vouloir continuer ?</string>
+     </property>
+     <property name="alignment"><set>Qt::AlignCenter</set></property>
+     <property name="wordWrap"><bool>true</bool></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="checkUnderstand">
+     <property name="text"><string>J'ai compris les conséquences de cette action.</string></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation"><enum>Qt::Horizontal</enum></property>
+     <property name="standardButtons"><set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TutorialDialog</class>
+ <widget class="QDialog" name="TutorialDialog">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="labelStep">
+     <property name="wordWrap"><bool>true</bool></property>
+     <property name="alignment"><set>Qt::AlignCenter</set></property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item><widget class="QPushButton" name="buttonPrev"><property name="text"><string>Précédent</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonNext"><property name="text"><string>Suivant</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonClose"><property name="text"><string>Fermer</string></property></widget></item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

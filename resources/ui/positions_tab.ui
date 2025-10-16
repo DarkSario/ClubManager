@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PositionsTab</class>
+ <widget class="QWidget" name="PositionsTab">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutTop">
+     <item><widget class="QPushButton" name="buttonAddPosition"><property name="text"><string>Ajouter</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonEditPosition"><property name="text"><string>Modifier</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonDeletePosition"><property name="text"><string>Supprimer</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonExportPositions"><property name="text"><string>Exporter</string></property></widget></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="tablePositions">
+     <column>
+      <property name="text"><string>Poste</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Type</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Affecté à</string></property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutBottom">
+     <item><widget class="QPushButton" name="buttonAffect"><property name="text"><string>Affecter à un membre</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonUnaffect"><property name="text"><string>Désaffecter</string></property></widget></item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

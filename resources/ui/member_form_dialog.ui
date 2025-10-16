@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MemberFormDialog</class>
+ <widget class="QDialog" name="MemberFormDialog">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0"><widget class="QLabel" name="labelLastName"><property name="text"><string>Nom :</string></property></widget></item>
+     <item row="0" column="1"><widget class="QLineEdit" name="editLastName"/></item>
+     <item row="1" column="0"><widget class="QLabel" name="labelFirstName"><property name="text"><string>Prénom :</string></property></widget></item>
+     <item row="1" column="1"><widget class="QLineEdit" name="editFirstName"/></item>
+     <item row="2" column="0"><widget class="QLabel" name="labelAddress"><property name="text"><string>Adresse :</string></property></widget></item>
+     <item row="2" column="1"><widget class="QLineEdit" name="editAddress"/></item>
+     <item row="3" column="0"><widget class="QLabel" name="labelPostalCode"><property name="text"><string>Code postal :</string></property></widget></item>
+     <item row="3" column="1"><widget class="QLineEdit" name="editPostalCode"/></item>
+     <item row="4" column="0"><widget class="QLabel" name="labelCity"><property name="text"><string>Ville :</string></property></widget></item>
+     <item row="4" column="1"><widget class="QLineEdit" name="editCity"/></item>
+     <item row="5" column="0"><widget class="QLabel" name="labelPhone"><property name="text"><string>N° de tél. :</string></property></widget></item>
+     <item row="5" column="1"><widget class="QLineEdit" name="editPhone"/></item>
+     <item row="6" column="0"><widget class="QLabel" name="labelMail"><property name="text"><string>Mail :</string></property></widget></item>
+     <item row="6" column="1"><widget class="QLineEdit" name="editMail"/></item>
+     <item row="7" column="0" colspan="2"><widget class="QCheckBox" name="checkRGPD"><property name="text"><string>Consentement RGPD (obligatoire)</string></property></widget></item>
+     <item row="8" column="0" colspan="2"><widget class="QCheckBox" name="checkImageRights"><property name="text"><string>Droit à l'image accepté</string></property></widget></item>
+     <item row="9" column="0"><widget class="QLabel" name="labelHealth"><property name="text"><string>Fiche santé :</string></property></widget></item>
+     <item row="9" column="1"><widget class="QLineEdit" name="editHealth"/></item>
+     <item row="10" column="0" colspan="2"><widget class="QCheckBox" name="checkANCV"><property name="text"><string>Paiement ANCV</string></property></widget></item>
+     <item row="11" column="0"><widget class="QLabel" name="labelCash"><property name="text"><string>Espèce :</string></property></widget></item>
+     <item row="11" column="1"><widget class="QLineEdit" name="editCash"/></item>
+     <item row="12" column="0"><widget class="QLabel" name="labelCheque1"><property name="text"><string>Chèque 1 :</string></property></widget></item>
+     <item row="12" column="1"><widget class="QLineEdit" name="editCheque1"/></item>
+     <item row="13" column="0"><widget class="QLabel" name="labelCheque2"><property name="text"><string>Chèque 2 :</string></property></widget></item>
+     <item row="13" column="1"><widget class="QLineEdit" name="editCheque2"/></item>
+     <item row="14" column="0"><widget class="QLabel" name="labelCheque3"><property name="text"><string>Chèque 3 :</string></property></widget></item>
+     <item row="14" column="1"><widget class="QLineEdit" name="editCheque3"/></item>
+     <item row="15" column="0"><widget class="QLabel" name="labelTotalPaid"><property name="text"><string>Total payé :</string></property></widget></item>
+     <item row="15" column="1"><widget class="QLineEdit" name="editTotalPaid"/></item>
+     <item row="16" column="0"><widget class="QLabel" name="labelClubPart"><property name="text"><string>Part adhésion club :</string></property></widget></item>
+     <item row="16" column="1"><widget class="QLineEdit" name="editClubPart"/></item>
+     <item row="17" column="0"><widget class="QLabel" name="labelMJCPart"><property name="text"><string>Part adhésion MJC :</string></property></widget></item>
+     <item row="17" column="1"><widget class="QLineEdit" name="editMJCPart"/></item>
+     <item row="18" column="0" colspan="2"><widget class="QCheckBox" name="checkMultiClub"><property name="text"><string>Déjà membre d'un autre club</string></property></widget></item>
+     <item row="19" column="0"><widget class="QLabel" name="labelExternalClub"><property name="text"><string>Club externe :</string></property></widget></item>
+     <item row="19" column="1"><widget class="QLineEdit" name="editExternalClub"><property name="enabled"><bool>false</bool></property><property name="placeholderText"><string>Nom du club externe</string></property></widget></item>
+     <item row="20" column="0" colspan="2"><widget class="QCheckBox" name="checkMJCElsewhere"><property name="text"><string>Part MJC déjà réglée ailleurs</string></property></widget></item>
+     <item row="21" column="0"><widget class="QLabel" name="labelMJCClub"><property name="text"><string>Club MJC réglé :</string></property></widget></item>
+     <item row="21" column="1"><widget class="QLineEdit" name="editMJCClub"><property name="enabled"><bool>false</bool></property><property name="placeholderText"><string>Nom du club où la part MJC a été réglée</string></property></widget></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation"><enum>Qt::Horizontal</enum></property>
+     <property name="standardButtons"><set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

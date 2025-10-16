@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CotisationsTab</class>
+ <widget class="QWidget" name="CotisationsTab">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutTop">
+     <item><widget class="QPushButton" name="buttonAddCotisation"><property name="text"><string>Ajouter</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonEditCotisation"><property name="text"><string>Modifier</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonDeleteCotisation"><property name="text"><string>Supprimer</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonExportCotisations"><property name="text"><string>Exporter</string></property></widget></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="tableCotisations">
+     <column>
+      <property name="text"><string>Membre</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Session</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Montant</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Payé</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Date</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Méthode</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Statut</string></property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="buttonRelance">
+     <property name="text"><string>Relancer les adhérents en retard</string></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

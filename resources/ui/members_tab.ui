@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MembersTab</class>
+ <widget class="QWidget" name="MembersTab">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutTop">
+     <item><widget class="QPushButton" name="buttonAddMember"><property name="text"><string>Ajouter</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonEditMember"><property name="text"><string>Modifier</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonDeleteMember"><property name="text"><string>Supprimer</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonExportMembers"><property name="text"><string>Exporter</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonMailing"><property name="text"><string>Mailing</string></property></widget></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="tableMembers">
+     <column>
+      <property name="text"><string>Nom</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Prénom</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Adresse</string></property>
+     </column>
+     <column>
+      <property name="text"><string>CP</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Ville</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Tél</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Mail</string></property>
+     </column>
+     <column>
+      <property name="text"><string>RGPD</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Droit image</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Cotisation</string></property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutFilter">
+     <item><widget class="QPushButton" name="buttonFilter"><property name="text"><string>Filtrer</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonResetFilter"><property name="text"><string>Réinitialiser</string></property></widget></item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
