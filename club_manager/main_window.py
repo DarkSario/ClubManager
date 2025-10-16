@@ -8,8 +8,8 @@ from PyQt5.QtWidgets import QMainWindow, QTabWidget, QAction, QFileDialog, QMess
 from PyQt5.QtGui import QIcon
 from club_manager.ui.members_tab import MembersTab
 from club_manager.ui.positions_tab import PositionsTab
-from club_manager.ui.cotisations_tab import CotisationsTab
-from club_manager.ui.custom_fields_tab import CustomFieldsTab
+from club_manager.ui.mjc_clubs_tab import MJCClubsTab
+from club_manager.ui.annual_prices_tab import AnnualPricesTab
 from club_manager.ui.audit_tab import AuditTab
 from club_manager.ui.exports_tab import ExportsTab
 from club_manager.ui.mailing_tab import MailingTab
@@ -55,8 +55,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.tabs)
         self.members_tab = MembersTab()
         self.positions_tab = PositionsTab()
-        self.cotisations_tab = CotisationsTab()
-        self.custom_fields_tab = CustomFieldsTab()
+        self.mjc_clubs_tab = MJCClubsTab()
+        self.annual_prices_tab = AnnualPricesTab()
         self.audit_tab = AuditTab()
         self.exports_tab = ExportsTab()
         self.mailing_tab = MailingTab()
@@ -65,8 +65,8 @@ class MainWindow(QMainWindow):
 
         self.tabs.addTab(self.members_tab, "Membres")
         self.tabs.addTab(self.positions_tab, "Postes")
-        self.tabs.addTab(self.cotisations_tab, "Cotisations")
-        self.tabs.addTab(self.custom_fields_tab, "Champs personnalisés")
+        self.tabs.addTab(self.mjc_clubs_tab, "Clubs MJC")
+        self.tabs.addTab(self.annual_prices_tab, "Prix annuels")
         self.tabs.addTab(self.exports_tab, "Exports")
         self.tabs.addTab(self.mailing_tab, "Mailing")
         self.tabs.addTab(self.audit_tab, "Audit")
@@ -140,7 +140,11 @@ class MainWindow(QMainWindow):
         except:
             pass
         try:
-            self.cotisations_tab.refresh_cotisations()
+            self.mjc_clubs_tab.refresh_clubs()
+        except:
+            pass
+        try:
+            self.annual_prices_tab.refresh_prices()
         except:
             pass
         # Ajouter d'autres rafraîchissements si nécessaire

@@ -31,7 +31,7 @@ class ExportsTab(QtWidgets.QWidget, Ui_ExportsTab):
             self,
             "Type d'export",
             "Que souhaitez-vous exporter ?",
-            ["Membres", "Cotisations", "Postes", "Champs personnalisés"],
+            ["Membres", "Postes", "Clubs MJC", "Prix annuels"],
             0,
             False
         )
@@ -47,18 +47,18 @@ class ExportsTab(QtWidgets.QWidget, Ui_ExportsTab):
                 from club_manager.core.members import get_all_members
                 data = get_all_members()
                 filename = "membres_export.csv"
-            elif choice == "Cotisations":
-                from club_manager.core.cotisations import get_all_cotisations
-                data = get_all_cotisations()
-                filename = "cotisations_export.csv"
             elif choice == "Postes":
                 from club_manager.core.positions import get_all_positions
                 data = get_all_positions()
                 filename = "postes_export.csv"
-            elif choice == "Champs personnalisés":
-                from club_manager.core.custom_fields import get_all_custom_fields
-                data = get_all_custom_fields()
-                filename = "champs_personnalises_export.csv"
+            elif choice == "Clubs MJC":
+                from club_manager.core.mjc_clubs import get_all_mjc_clubs
+                data = get_all_mjc_clubs()
+                filename = "clubs_mjc_export.csv"
+            elif choice == "Prix annuels":
+                from club_manager.core.annual_prices import get_all_annual_prices
+                data = get_all_annual_prices()
+                filename = "prix_annuels_export.csv"
             
             if not data:
                 QtWidgets.QMessageBox.information(self, "Export", f"Aucune donnée à exporter pour {choice}.")
