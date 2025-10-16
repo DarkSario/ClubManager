@@ -13,6 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential libatlas-base-dev
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -22,7 +25,7 @@ jobs:
         run: pip install --upgrade pip setuptools wheel
 
       - name: Install numpy separately
-        run: pip install numpy
+        run: pip install numpy>=1.23
 
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
@@ -34,4 +37,4 @@ jobs:
         run: pip freeze
 
       - name: Run tests
-        run: pytest -v -s --maxfail=1
+        run: pytest -v --maxfail=1
