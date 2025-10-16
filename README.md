@@ -6,7 +6,7 @@ Club Manager est une application de gestion complète pour les associations spor
 
 - **Gestion des membres** : Ajout, modification, suppression et recherche d'adhérents
 - **Gestion des cotisations** : Suivi des paiements avec plusieurs méthodes (chèque, espèce, ANCV, virement)
-- **Système multi-bases** : Une base de données par saison/année pour faciliter la gestion
+- **Système multi-bases** : Une base de données par saison/année pour faciliter la gestion (remplace l'ancien système de sessions)
 - **Gestion des postes** : Attribution des responsabilités au sein du club
 - **Exports** : Export des données en CSV ou PDF
 - **Mailing** : Envoi d'emails groupés aux adhérents
@@ -124,9 +124,9 @@ Le tableau se rafraîchit automatiquement après l'ajout.
 
 Le tableau se met à jour automatiquement après l'ajout.
 
-### Sessions (pour information)
+### Note sur les Sessions
 
-Bien que le système de sessions existe toujours dans la base de données, il est maintenant secondaire par rapport au système multi-bases. Vous pouvez toujours utiliser les sessions pour organiser des périodes spécifiques au sein d'une saison (ex: trimestres, stages d'été, etc.).
+L'onglet Sessions a été supprimé de l'interface. Le système multi-bases (une base = une saison) remplace maintenant complètement la fonctionnalité de sessions. Les données de sessions restent disponibles dans la base pour la compatibilité avec les cotisations existantes, mais l'interface de gestion a été retirée pour simplifier l'utilisation.
 
 ## Sauvegarde et restauration
 
@@ -162,6 +162,17 @@ Pour signaler un bug ou proposer une amélioration :
 Tous droits réservés.
 
 ## Historique des versions
+
+### Version 2.1 (Octobre 2024)
+- ✨ **Suppression de l'onglet Sessions** : Le système multi-bases remplace complètement les sessions
+- ✨ **Business logic complète** : Implémentation CRUD complète pour tous les onglets
+- ✨ **Feedbacks utilisateur** : Dialogues de confirmation, validation, messages de succès/erreur
+- 🔧 Édition de membres, cotisations, postes et champs personnalisés
+- 🔧 Suppression avec confirmation pour toutes les entités
+- 🔧 Export CSV pour membres, cotisations, postes et champs personnalisés
+- 🔧 Affectation de postes aux membres
+- 🔧 Relance automatique pour les paiements en retard
+- 📝 Docstrings complètes sur toutes les méthodes
 
 ### Version 2.0 (Octobre 2024)
 - ✨ **Nouveau système multi-bases** : Une base par saison/année
