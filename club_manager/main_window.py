@@ -20,18 +20,36 @@ from club_manager.ui.about_dialog import AboutDialog
 from club_manager.ui.welcome_dialog import WelcomeDialog
 from club_manager.ui.tutorial_dialog import TutorialDialog
 from club_manager.ui.doc_viewer_dialog import DocViewerDialog
+from club_manager.ui.database_selector_dialog import DatabaseSelectorDialog
 from club_manager.core.theming import load_theme_choice, load_theme
+from club_manager.core.database import Database
+import os
 
 class MainWindow(QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, db_path=None, parent=None):
         super().__init__(parent)
+        self.db_path = db_path
+        
+        # Initialiser la base de données
+        if self.db_path:
+            Database.instance(self.db_path)
+        
         self.setWindowTitle("Club Manager")
         self.setWindowIcon(QIcon(":/images/logo.png"))
         self.resize(1200, 780)
         self.setup_tabs()        # Initialiser les tabs en premier !
         self.setup_menu()
         self.apply_theme_on_startup()
-        self.show_welcome_if_first_launch()
+        self.update_window_title()
+        # Note: show_welcome_if_first_launch supprimé car remplacé par database_selector_dialog
+
+    def update_window_title(self):
+        """Met à jour le titre de la fenêtre avec le nom de la base."""
+        if self.db_path:
+            db_name = os.path.basename(self.db_path)
+            self.setWindowTitle(f"Club Manager - {db_name}")
+        else:
+            self.setWindowTitle("Club Manager")
 
     def setup_tabs(self):
         self.tabs = QTabWidget()
@@ -63,6 +81,12 @@ class MainWindow(QMainWindow):
         file_menu = menu.addMenu("&Fichier")
         help_menu = menu.addMenu("&Aide")
 
+        action_change_db = QAction("Changer de base de données...", self)
+        action_change_db.triggered.connect(self.change_database)
+        file_menu.addAction(action_change_db)
+        
+        file_menu.addSeparator()
+
         action_backup = QAction("Exporter une sauvegarde...", self)
         action_backup.triggered.connect(self.backup_tab.start_backup)
         file_menu.addAction(action_backup)
@@ -86,6 +110,47 @@ class MainWindow(QMainWindow):
         action_about = QAction("À propos...", self)
         action_about.triggered.connect(self.show_about)
         help_menu.addAction(action_about)
+    
+    def change_database(self):
+        """Permet de changer de base de données."""
+        reply = QMessageBox.question(
+            self,
+            "Changer de base de données",
+            "Voulez-vous vraiment changer de base de données ?\n"
+            "Toutes les modifications non sauvegardées seront perdues.",
+            QMessageBox.Yes | QMessageBox.No
+        )
+        if reply == QMessageBox.Yes:
+            db_selector = DatabaseSelectorDialog(self)
+            if db_selector.exec_() == DatabaseSelectorDialog.Accepted:
+                new_db_path = db_selector.get_selected_database_path()
+                if new_db_path:
+                    self.db_path = new_db_path
+                    Database.change_database(self.db_path)
+                    self.update_window_title()
+                    # Rafraîchir tous les tabs
+                    self.refresh_all_tabs()
+                    QMessageBox.information(
+                        self,
+                        "Base changée",
+                        f"La base de données a été changée avec succès."
+                    )
+    
+    def refresh_all_tabs(self):
+        """Rafraîchit tous les onglets après un changement de base."""
+        try:
+            self.members_tab.refresh_members()
+        except:
+            pass
+        try:
+            self.cotisations_tab.refresh_cotisations()
+        except:
+            pass
+        try:
+            self.sessions_tab.refresh_sessions()
+        except:
+            pass
+        # Ajouter d'autres rafraîchissements si nécessaire
 
     def show_about(self):
         dialog = AboutDialog(self)
@@ -106,13 +171,3 @@ class MainWindow(QMainWindow):
         if qss:
             load_theme(qss, self.parent() or self)
 
-    def show_welcome_if_first_launch(self):
-        # Logique simplifiée : afficher si pas de config, sinon passer
-        import os
-        if not os.path.exists("club_manager.conf"):
-            dlg = WelcomeDialog(self)
-            if dlg.exec_() == dlg.Accepted:
-                # On pourrait sauvegarder les choix ici
-                open("club_manager.conf", "w").close()
-            else:
-                self.close()

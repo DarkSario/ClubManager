@@ -9,12 +9,26 @@ import threading
 class Database:
     _instance = None
     _lock = threading.Lock()
+    _current_db_path = None
 
     @staticmethod
     def instance(db_path="club_manager.db"):
         with Database._lock:
-            if Database._instance is None:
+            if Database._instance is None or Database._current_db_path != db_path:
+                if Database._instance is not None:
+                    Database._instance.close()
                 Database._instance = Database(db_path)
+                Database._current_db_path = db_path
+            return Database._instance
+    
+    @staticmethod
+    def change_database(db_path):
+        """Change la base de données active."""
+        with Database._lock:
+            if Database._instance is not None:
+                Database._instance.connection.close()
+            Database._instance = Database(db_path)
+            Database._current_db_path = db_path
             return Database._instance
 
     def __init__(self, db_path):
@@ -46,7 +60,7 @@ class Database:
             CREATE TABLE IF NOT EXISTS cotisations (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 member_id INTEGER, session_id INTEGER, amount REAL, paid REAL, payment_date DATE,
-                method TEXT, status TEXT,
+                method TEXT, status TEXT, cheque_number TEXT,
                 FOREIGN KEY(member_id) REFERENCES members(id),
                 FOREIGN KEY(session_id) REFERENCES sessions(id)
             );

@@ -28,10 +28,38 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
     def add_member(self):
         # Logique d'ajout d'un adhérent (ouvre le dialog)
         from club_manager.ui.member_form_dialog import MemberFormDialog
+        from club_manager.core.members import add_member as add_member_db
         dlg = MemberFormDialog(self)
         if dlg.exec_() == QtWidgets.QDialog.Accepted:
-            # Ajout effectif du membre, recharge table
-            self.refresh_members()
+            # Récupérer toutes les valeurs du formulaire
+            try:
+                add_member_db(
+                    last_name=dlg.editLastName.text(),
+                    first_name=dlg.editFirstName.text(),
+                    address=dlg.editAddress.text(),
+                    postal_code=dlg.editPostalCode.text(),
+                    city=dlg.editCity.text(),
+                    phone=dlg.editPhone.text(),
+                    mail=dlg.editMail.text(),
+                    rgpd=int(dlg.checkRGPD.isChecked()),
+                    image_rights=int(dlg.checkImageRights.isChecked()),
+                    health=dlg.editHealth.text(),
+                    ancv=int(dlg.checkANCV.isChecked()),
+                    cash=float(dlg.editCash.text() or '0'),
+                    cheque1=dlg.editCheque1.text(),
+                    cheque2=dlg.editCheque2.text(),
+                    cheque3=dlg.editCheque3.text(),
+                    total_paid=float(dlg.editTotalPaid.text() or '0'),
+                    club_part=float(dlg.editClubPart.text() or '0'),
+                    mjc_part=float(dlg.editMJCPart.text() or '0'),
+                    external_club=dlg.editExternalClub.text() if dlg.checkMultiClub.isChecked() else None,
+                    mjc_elsewhere=dlg.editMJCClub.text() if dlg.checkMJCElsewhere.isChecked() else None
+                )
+                # Recharger la table
+                self.refresh_members()
+                QtWidgets.QMessageBox.information(self, "Succès", "Membre ajouté avec succès.")
+            except Exception as e:
+                QtWidgets.QMessageBox.critical(self, "Erreur", f"Erreur lors de l'ajout du membre : {str(e)}")
     
     def edit_member(self):
         # Logique de modification d'un adhérent sélectionné
@@ -60,4 +88,20 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
 
     def refresh_members(self):
         # Recharge la table depuis la base
-        pass
+        from club_manager.core.members import get_all_members
+        members = get_all_members()
+        self.tableMembers.setRowCount(0)
+        for row_idx, member in enumerate(members):
+            self.tableMembers.insertRow(row_idx)
+            self.tableMembers.setItem(row_idx, 0, QtWidgets.QTableWidgetItem(str(member['last_name'] or '')))
+            self.tableMembers.setItem(row_idx, 1, QtWidgets.QTableWidgetItem(str(member['first_name'] or '')))
+            self.tableMembers.setItem(row_idx, 2, QtWidgets.QTableWidgetItem(str(member['address'] or '')))
+            self.tableMembers.setItem(row_idx, 3, QtWidgets.QTableWidgetItem(str(member['postal_code'] or '')))
+            self.tableMembers.setItem(row_idx, 4, QtWidgets.QTableWidgetItem(str(member['city'] or '')))
+            self.tableMembers.setItem(row_idx, 5, QtWidgets.QTableWidgetItem(str(member['phone'] or '')))
+            self.tableMembers.setItem(row_idx, 6, QtWidgets.QTableWidgetItem(str(member['mail'] or '')))
+            self.tableMembers.setItem(row_idx, 7, QtWidgets.QTableWidgetItem('Oui' if member['rgpd'] else 'Non'))
+            self.tableMembers.setItem(row_idx, 8, QtWidgets.QTableWidgetItem('Oui' if member['image_rights'] else 'Non'))
+            self.tableMembers.setItem(row_idx, 9, QtWidgets.QTableWidgetItem(str(member['total_paid'] or '0')))
+            # Stocker l'ID du membre dans la première colonne
+            self.tableMembers.item(row_idx, 0).setData(QtWidgets.QTableWidgetItem.UserType, member['id'])
