@@ -12,13 +12,19 @@ class Database:
     _current_db_path = None
 
     @staticmethod
-    def instance(db_path="club_manager.db"):
+    def instance(db_path=None):
         with Database._lock:
-            if Database._instance is None or Database._current_db_path != db_path:
+            # Si un path est fourni et qu'il est différent, changer la base
+            if db_path and Database._current_db_path != db_path:
                 if Database._instance is not None:
-                    Database._instance.close()
+                    Database._instance.connection.close()
                 Database._instance = Database(db_path)
                 Database._current_db_path = db_path
+            # Si aucun path n'est fourni et qu'il n'y a pas d'instance, utiliser le défaut
+            elif Database._instance is None:
+                default_path = "club_manager.db"
+                Database._instance = Database(default_path)
+                Database._current_db_path = default_path
             return Database._instance
     
     @staticmethod
@@ -89,3 +95,4 @@ class Database:
     def close(self):
         self.connection.close()
         Database._instance = None
+        Database._current_db_path = None
