@@ -72,10 +72,9 @@ def test_member_operations():
             mail="jean.dupont@example.com",
             rgpd=1,
             image_rights=1,
-            cash=0.0,
-            total_paid=0.0,
-            club_part=0.0,
-            mjc_part=0.0
+            payment_type="club_mjc",
+            ancv_amount=0.0,
+            cotisation_status="Non payée"
         )
         
         # Récupérer tous les membres

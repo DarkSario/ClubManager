@@ -51,9 +51,13 @@ class Database:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 last_name TEXT, first_name TEXT, address TEXT, postal_code TEXT, city TEXT,
                 phone TEXT, mail TEXT, rgpd INTEGER, image_rights INTEGER,
-                health TEXT, ancv INTEGER, cash REAL, cheque1 TEXT, cheque2 TEXT, cheque3 TEXT,
-                total_paid REAL, club_part REAL, mjc_part REAL,
-                external_club TEXT, mjc_elsewhere TEXT
+                health TEXT,
+                payment_type TEXT,
+                ancv_amount REAL,
+                mjc_club_id INTEGER,
+                cotisation_status TEXT,
+                external_club TEXT,
+                FOREIGN KEY(mjc_club_id) REFERENCES mjc_clubs(id)
             );
             CREATE TABLE IF NOT EXISTS positions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -77,6 +81,18 @@ class Database:
             CREATE TABLE IF NOT EXISTS audit (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 date TEXT, action TEXT, user TEXT, object TEXT, details TEXT
+            );
+            CREATE TABLE IF NOT EXISTS mjc_clubs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT UNIQUE NOT NULL,
+                created_date TEXT
+            );
+            CREATE TABLE IF NOT EXISTS annual_prices (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                year TEXT UNIQUE NOT NULL,
+                club_price REAL NOT NULL,
+                mjc_price REAL NOT NULL,
+                is_current INTEGER DEFAULT 0
             );
         """)
         self.connection.commit()

@@ -63,6 +63,14 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                 return
             
             try:
+                # Récupérer le type de paiement
+                payment_type = "club_mjc" if dlg.comboPaymentType.currentIndex() == 0 else "club_only"
+                
+                # Récupérer l'ID du club MJC si applicable
+                mjc_club_id = None
+                if payment_type == "club_only" and dlg.comboMJCClub.currentIndex() > 0:
+                    mjc_club_id = dlg.comboMJCClub.currentData()
+                
                 add_member_db(
                     last_name=dlg.editLastName.text(),
                     first_name=dlg.editFirstName.text(),
@@ -74,16 +82,11 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                     rgpd=int(dlg.checkRGPD.isChecked()),
                     image_rights=int(dlg.checkImageRights.isChecked()),
                     health=dlg.editHealth.text(),
-                    ancv=int(dlg.checkANCV.isChecked()),
-                    cash=float(dlg.editCash.text() or '0'),
-                    cheque1=dlg.editCheque1.text(),
-                    cheque2=dlg.editCheque2.text(),
-                    cheque3=dlg.editCheque3.text(),
-                    total_paid=float(dlg.editTotalPaid.text() or '0'),
-                    club_part=float(dlg.editClubPart.text() or '0'),
-                    mjc_part=float(dlg.editMJCPart.text() or '0'),
-                    external_club=dlg.editExternalClub.text() if dlg.checkMultiClub.isChecked() else None,
-                    mjc_elsewhere=dlg.editMJCClub.text() if dlg.checkMJCElsewhere.isChecked() else None
+                    payment_type=payment_type,
+                    ancv_amount=float(dlg.editANCVAmount.text() or '0'),
+                    mjc_club_id=mjc_club_id,
+                    cotisation_status=dlg.comboCotisationStatus.currentText(),
+                    external_club=dlg.editExternalClub.text() if dlg.checkMultiClub.isChecked() else None
                 )
                 self.refresh_members()
                 QtWidgets.QMessageBox.information(self, "Succès", "Membre ajouté avec succès.")
@@ -127,28 +130,46 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
             dlg.checkRGPD.setChecked(bool(member.get('rgpd', 0)))
             dlg.checkImageRights.setChecked(bool(member.get('image_rights', 0)))
             dlg.editHealth.setText(member.get('health', ''))
-            dlg.checkANCV.setChecked(bool(member.get('ancv', 0)))
-            dlg.editCash.setText(str(member.get('cash', 0)))
-            dlg.editCheque1.setText(member.get('cheque1', ''))
-            dlg.editCheque2.setText(member.get('cheque2', ''))
-            dlg.editCheque3.setText(member.get('cheque3', ''))
-            dlg.editTotalPaid.setText(str(member.get('total_paid', 0)))
-            dlg.editClubPart.setText(str(member.get('club_part', 0)))
-            dlg.editMJCPart.setText(str(member.get('mjc_part', 0)))
+            
+            # Restaurer le type de paiement
+            payment_type = member.get('payment_type', 'club_mjc')
+            if payment_type == 'club_only':
+                dlg.comboPaymentType.setCurrentIndex(1)
+                # Restaurer le club MJC sélectionné
+                mjc_club_id = member.get('mjc_club_id')
+                if mjc_club_id:
+                    for i in range(dlg.comboMJCClub.count()):
+                        if dlg.comboMJCClub.itemData(i) == mjc_club_id:
+                            dlg.comboMJCClub.setCurrentIndex(i)
+                            break
+            else:
+                dlg.comboPaymentType.setCurrentIndex(0)
+            
+            dlg.editANCVAmount.setText(str(member.get('ancv_amount', 0)))
+            
+            # Restaurer le statut de cotisation
+            status = member.get('cotisation_status', 'Non payée')
+            index = dlg.comboCotisationStatus.findText(status)
+            if index >= 0:
+                dlg.comboCotisationStatus.setCurrentIndex(index)
             
             if member.get('external_club'):
                 dlg.checkMultiClub.setChecked(True)
                 dlg.editExternalClub.setText(member.get('external_club', ''))
-            
-            if member.get('mjc_elsewhere'):
-                dlg.checkMJCElsewhere.setChecked(True)
-                dlg.editMJCClub.setText(member.get('mjc_elsewhere', ''))
             
             if dlg.exec_() == QtWidgets.QDialog.Accepted:
                 # Validation
                 if not dlg.editLastName.text() or not dlg.editFirstName.text():
                     QtWidgets.QMessageBox.warning(self, "Champs obligatoires", "Le nom et le prénom sont obligatoires.")
                     return
+                
+                # Récupérer le type de paiement
+                payment_type = "club_mjc" if dlg.comboPaymentType.currentIndex() == 0 else "club_only"
+                
+                # Récupérer l'ID du club MJC si applicable
+                mjc_club_id = None
+                if payment_type == "club_only" and dlg.comboMJCClub.currentIndex() > 0:
+                    mjc_club_id = dlg.comboMJCClub.currentData()
                 
                 update_member(
                     member_id,
@@ -162,16 +183,11 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                     rgpd=int(dlg.checkRGPD.isChecked()),
                     image_rights=int(dlg.checkImageRights.isChecked()),
                     health=dlg.editHealth.text(),
-                    ancv=int(dlg.checkANCV.isChecked()),
-                    cash=float(dlg.editCash.text() or '0'),
-                    cheque1=dlg.editCheque1.text(),
-                    cheque2=dlg.editCheque2.text(),
-                    cheque3=dlg.editCheque3.text(),
-                    total_paid=float(dlg.editTotalPaid.text() or '0'),
-                    club_part=float(dlg.editClubPart.text() or '0'),
-                    mjc_part=float(dlg.editMJCPart.text() or '0'),
-                    external_club=dlg.editExternalClub.text() if dlg.checkMultiClub.isChecked() else None,
-                    mjc_elsewhere=dlg.editMJCClub.text() if dlg.checkMJCElsewhere.isChecked() else None
+                    payment_type=payment_type,
+                    ancv_amount=float(dlg.editANCVAmount.text() or '0'),
+                    mjc_club_id=mjc_club_id,
+                    cotisation_status=dlg.comboCotisationStatus.currentText(),
+                    external_club=dlg.editExternalClub.text() if dlg.checkMultiClub.isChecked() else None
                 )
                 self.refresh_members()
                 QtWidgets.QMessageBox.information(self, "Succès", "Membre modifié avec succès.")
