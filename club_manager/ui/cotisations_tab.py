@@ -20,6 +20,11 @@ class CotisationsTab(QtWidgets.QWidget, Ui_CotisationsTab):
         self.buttonExportCotisations.clicked.connect(self.export_cotisations)
         self.tableCotisations.doubleClicked.connect(self.edit_cotisation)
         self.buttonRelance.clicked.connect(self.relance_cotisation)
+        # Charger les cotisations au démarrage
+        try:
+            self.refresh_cotisations()
+        except:
+            pass  # La base n'est peut-être pas encore initialisée
 
     def add_cotisation(self):
         from club_manager.ui.cotisation_form_dialog import CotisationFormDialog

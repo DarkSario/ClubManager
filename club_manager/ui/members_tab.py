@@ -23,7 +23,11 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
         self.buttonResetFilter.clicked.connect(self.reset_filter)
         self.buttonMailing.clicked.connect(self.do_mailing)
         self.tableMembers.doubleClicked.connect(self.edit_member)
-        # TODO : Connexions additionnelles selon les besoins
+        # Charger les membres au démarrage
+        try:
+            self.refresh_members()
+        except:
+            pass  # La base n'est peut-être pas encore initialisée
 
     def add_member(self):
         # Logique d'ajout d'un adhérent (ouvre le dialog)
