@@ -32,7 +32,8 @@ class Ui_CotisationFormDialog(object):
         self.editChequeNumber.setEnabled(True)
         self.editChequeNumber.hide()
         self.formLayout.addRow("Numéro de chèque :", self.editChequeNumber)
-self.comboStatus = QtWidgets.QComboBox(CotisationFormDialog)
+        
+        self.comboStatus = QtWidgets.QComboBox(CotisationFormDialog)
         self.comboStatus.addItems(["Payé", "En attente", "Partiel", "Relancé"])
         self.formLayout.addRow("Statut :", self.comboStatus)
         self.verticalLayout.addLayout(self.formLayout)

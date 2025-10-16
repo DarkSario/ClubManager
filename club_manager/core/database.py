@@ -9,12 +9,32 @@ import threading
 class Database:
     _instance = None
     _lock = threading.Lock()
+    _current_db_path = None
 
     @staticmethod
-    def instance(db_path="club_manager.db"):
+    def instance(db_path=None):
         with Database._lock:
-            if Database._instance is None:
+            # Si un path est fourni et qu'il est différent, changer la base
+            if db_path and Database._current_db_path != db_path:
+                if Database._instance is not None:
+                    Database._instance.connection.close()
                 Database._instance = Database(db_path)
+                Database._current_db_path = db_path
+            # Si aucun path n'est fourni et qu'il n'y a pas d'instance, utiliser le défaut
+            elif Database._instance is None:
+                default_path = "club_manager.db"
+                Database._instance = Database(default_path)
+                Database._current_db_path = default_path
+            return Database._instance
+    
+    @staticmethod
+    def change_database(db_path):
+        """Change la base de données active."""
+        with Database._lock:
+            if Database._instance is not None:
+                Database._instance.connection.close()
+            Database._instance = Database(db_path)
+            Database._current_db_path = db_path
             return Database._instance
 
     def __init__(self, db_path):
@@ -46,7 +66,7 @@ class Database:
             CREATE TABLE IF NOT EXISTS cotisations (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 member_id INTEGER, session_id INTEGER, amount REAL, paid REAL, payment_date DATE,
-                method TEXT, status TEXT,
+                method TEXT, status TEXT, cheque_number TEXT,
                 FOREIGN KEY(member_id) REFERENCES members(id),
                 FOREIGN KEY(session_id) REFERENCES sessions(id)
             );
@@ -75,3 +95,4 @@ class Database:
     def close(self):
         self.connection.close()
         Database._instance = None
+        Database._current_db_path = None

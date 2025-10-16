@@ -10,18 +10,18 @@ def get_all_cotisations():
     db = Database.instance()
     return db.query("SELECT * FROM cotisations")
 
-def add_cotisation(member_id, session_id, amount, paid, payment_date, method, status):
+def add_cotisation(member_id, session_id, amount, paid, payment_date, method, status, cheque_number=None):
     db = Database.instance()
     db.execute(
-        "INSERT INTO cotisations (member_id, session_id, amount, paid, payment_date, method, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        (member_id, session_id, amount, paid, payment_date, method, status)
+        "INSERT INTO cotisations (member_id, session_id, amount, paid, payment_date, method, status, cheque_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        (member_id, session_id, float(amount), float(paid), payment_date, method, status, cheque_number)
     )
 
-def update_cotisation(cotisation_id, member_id, session_id, amount, paid, payment_date, method, status):
+def update_cotisation(cotisation_id, member_id, session_id, amount, paid, payment_date, method, status, cheque_number=None):
     db = Database.instance()
     db.execute(
-        "UPDATE cotisations SET member_id=?, session_id=?, amount=?, paid=?, payment_date=?, method=?, status=? WHERE id=?",
-        (member_id, session_id, amount, paid, payment_date, method, status, cotisation_id)
+        "UPDATE cotisations SET member_id=?, session_id=?, amount=?, paid=?, payment_date=?, method=?, status=?, cheque_number=? WHERE id=?",
+        (member_id, session_id, float(amount), float(paid), payment_date, method, status, cheque_number, cotisation_id)
     )
 
 def delete_cotisation(cotisation_id):
