@@ -6,10 +6,12 @@ Script de test pour valider les nouvelles fonctionnalités de gestion des clubs 
 
 import sys
 import os
+from pathlib import Path
 import tempfile
 
 # Ajouter le répertoire parent au path pour pouvoir importer club_manager
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
 
 from club_manager.core.database import Database
 from club_manager.core.members import add_member, get_all_members, get_member_by_id, update_member
@@ -89,8 +91,15 @@ def test_annual_prices():
         print("✓ Prix courant défini correctement")
         
         # Changer le prix courant
-        # Note: prices[0] est 2024-2025 (DESC order), prices[1] est 2023-2024
-        set_current_annual_price(prices[1]['id'])
+        # Trouver le prix 2023-2024 explicitement
+        price_2023_id = None
+        for price in prices:
+            if price['year'] == "2023-2024":
+                price_2023_id = price['id']
+                break
+        
+        assert price_2023_id is not None, "Prix 2023-2024 non trouvé"
+        set_current_annual_price(price_2023_id)
         current = get_current_annual_price()
         assert current['year'] == "2023-2024", "Changement de prix courant échoué"
         print("✓ Changement de prix courant réussi")
