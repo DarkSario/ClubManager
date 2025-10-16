@@ -5,7 +5,8 @@ Club Manager est une application de gestion complète pour les associations spor
 ## Fonctionnalités principales
 
 - **Gestion des membres** : Ajout, modification, suppression et recherche d'adhérents
-- **Gestion des cotisations** : Suivi des paiements avec plusieurs méthodes (chèque, espèce, ANCV, virement)
+- **Gestion des prix annuels** : Configuration des prix Club et MJC pour chaque année
+- **Gestion des clubs MJC** : Enregistrement des autres clubs MJC partenaires
 - **Système multi-bases** : Une base de données par saison/année pour faciliter la gestion (remplace l'ancien système de sessions)
 - **Gestion des postes** : Attribution des responsabilités au sein du club
 - **Exports** : Export des données en CSV ou PDF
@@ -108,25 +109,42 @@ python club_manager/main.py
 4. Les champs obligatoires incluent :
    - Nom et prénom
    - Consentement RGPD
-5. Cliquez sur **"OK"** pour enregistrer
+5. Choisissez le type de paiement :
+   - **Club + MJC** : Paiement global
+   - **Club uniquement** : Si la part MJC a été réglée dans un autre club MJC (sélectionner le club)
+6. Saisissez le montant ANCV si applicable
+7. Indiquez le statut de cotisation (Non payée, Payée, Partiellement payée)
+8. Cliquez sur **"OK"** pour enregistrer
 
 Le tableau se rafraîchit automatiquement après l'ajout.
 
-### Gestion des cotisations
+### Gestion des prix annuels
 
-1. Accédez à l'onglet **"Cotisations"**
-2. Cliquez sur **"Ajouter"** pour enregistrer un paiement
-3. Remplissez le formulaire :
-   - **Montant** et **Payé** doivent être des nombres décimaux (ex: 150.50)
-   - **Méthode** : Chèque, Espèce, ANCV, Virement, Autre
-   - Si vous sélectionnez **"Chèque"**, le champ numéro de chèque apparaît et devient obligatoire
-4. Cliquez sur **"OK"** pour enregistrer
+1. Accédez à l'onglet **"Prix annuels"**
+2. Cliquez sur **"Ajouter"** pour définir les prix d'une nouvelle année
+3. Remplissez :
+   - **Année** (ex: 2024-2025)
+   - **Prix Club**
+   - **Prix MJC**
+   - Cochez "Définir comme année courante" si nécessaire
+4. Cliquez sur **"Ajouter"** pour enregistrer
 
-Le tableau se met à jour automatiquement après l'ajout.
+### Gestion des clubs MJC
 
-### Note sur les Sessions
+1. Accédez à l'onglet **"Clubs MJC"**
+2. Saisissez le nom d'un club MJC partenaire
+3. Cliquez sur **"Ajouter"** pour l'enregistrer
+4. Ces clubs apparaîtront dans le formulaire membre pour les adhérents ayant réglé leur part MJC ailleurs
 
-L'onglet Sessions a été supprimé de l'interface. Le système multi-bases (une base = une saison) remplace maintenant complètement la fonctionnalité de sessions. Les données de sessions restent disponibles dans la base pour la compatibilité avec les cotisations existantes, mais l'interface de gestion a été retirée pour simplifier l'utilisation.
+### Note sur les Sessions et Cotisations
+
+L'onglet Sessions a été supprimé de l'interface. Le système multi-bases (une base = une saison) remplace maintenant complètement la fonctionnalité de sessions. Les données de sessions restent disponibles dans la base pour la compatibilité, mais l'interface de gestion a été retirée pour simplifier l'utilisation.
+
+L'onglet Cotisations a également été supprimé. La gestion des paiements est maintenant intégrée directement dans le formulaire membre avec :
+- Type de paiement (Club+MJC ou Club uniquement)
+- Montant ANCV
+- Statut de cotisation
+- Référence au club MJC si la part MJC a été réglée ailleurs
 
 ## Sauvegarde et restauration
 
@@ -162,6 +180,18 @@ Pour signaler un bug ou proposer une amélioration :
 Tous droits réservés.
 
 ## Historique des versions
+
+### Version 2.2 (Novembre 2024)
+- ✨ **Gestion annuelle des prix Club/MJC** : Configuration des prix pour chaque année
+- ✨ **Gestion des clubs MJC** : Enregistrement des clubs MJC partenaires
+- ✨ **Amélioration du formulaire membre** : 
+  - Type de paiement (Club+MJC ou Club uniquement)
+  - Sélection du club MJC si part réglée ailleurs
+  - Montant ANCV
+  - Statut de cotisation intégré
+- 🔧 **Suppression de l'onglet Cotisations** : Logique intégrée dans le formulaire membre
+- 🔧 **Suppression de l'onglet Champs personnalisés** : Simplification de l'interface
+- 📝 Mise à jour de la documentation
 
 ### Version 2.1 (Octobre 2024)
 - ✨ **Suppression de l'onglet Sessions** : Le système multi-bases remplace complètement les sessions
