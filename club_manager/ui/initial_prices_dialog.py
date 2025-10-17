@@ -19,7 +19,7 @@ class InitialPricesDialog(QtWidgets.QDialog, Ui_InitialPricesDialog):
         self.editYear.setText(f"{current_year}-{current_year + 1}")
         
         # Désactiver le bouton de fermeture pour forcer la configuration
-        self.setWindowFlags(self.windowFlags() & ~QtWidgets.Qt.WindowCloseButtonHint)
+        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowCloseButtonHint)
     
     def accept(self):
         """Valide et enregistre les tarifs."""
