@@ -94,14 +94,29 @@ def resolve_mjc_club_names(data):
             club_id = item_copy['mjc_club_id']
             item_copy['mjc_club_id'] = club_map.get(club_id, str(club_id))
         
-        # Résoudre other_mjc_clubs (liste d'IDs séparés par des virgules)
+        # Résoudre other_mjc_clubs (liste d'IDs au format JSON ou séparés par des virgules)
         if 'other_mjc_clubs' in item_copy and item_copy['other_mjc_clubs']:
             try:
-                # Séparer les IDs, les résoudre, et les rejoindre
-                club_ids = [int(id.strip()) for id in str(item_copy['other_mjc_clubs']).split(',')]
+                import json
+                value = item_copy['other_mjc_clubs']
+                
+                # Essayer de parser comme JSON array d'abord (format: "[5]" ou "[5,3]")
+                try:
+                    club_ids = json.loads(value) if isinstance(value, str) else value
+                except (json.JSONDecodeError, TypeError):
+                    # Si ce n'est pas du JSON, essayer de séparer par virgule
+                    club_ids = [int(id.strip()) for id in str(value).split(',')]
+                
+                # Convertir en liste d'entiers si nécessaire
+                if isinstance(club_ids, list):
+                    club_ids = [int(id) if not isinstance(id, int) else id for id in club_ids]
+                else:
+                    club_ids = [int(club_ids)]
+                
+                # Résoudre les IDs en noms de clubs
                 club_names = [club_map.get(club_id, str(club_id)) for club_id in club_ids]
                 item_copy['other_mjc_clubs'] = ', '.join(club_names)
-            except (ValueError, AttributeError):
+            except (ValueError, AttributeError, TypeError):
                 # Si on ne peut pas parser, garder la valeur originale
                 pass
         
