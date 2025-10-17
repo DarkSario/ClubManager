@@ -15,7 +15,7 @@ def select_recipients(members, filters=None):
     """Filtre dynamiquement les membres selon des critères (ex: statut cotisation, session, etc.)."""
     if not filters:
         return members
-    return [m for m in members if all(m.get(k) == v for k, v in filters.items())]
+    return [m for m in members if all(m[k] == v if k in m else False for k, v in filters.items())]
 
 def load_template(path):
     with open(path, "r", encoding="utf-8") as f:
@@ -37,11 +37,11 @@ def send_mass_mail(subject, template, members, smtp_config, parent=None, attachm
     errors = []
     for m in members:
         msg = MIMEMultipart()
-        context = {k: m.get(k, "") for k in m.keys()}
+        context = {k: m[k] if m[k] is not None else "" for k in m.keys()}
         msg.attach(MIMEText(personalize_template(template, context), "plain", "utf-8"))
         msg["Subject"] = subject
         msg["From"] = smtp_config["from"]
-        msg["To"] = m.get("mail", "")
+        msg["To"] = m["mail"] if m["mail"] else ""
 
         # Ajout pièces jointes
         if attachments:
@@ -58,9 +58,9 @@ def send_mass_mail(subject, template, members, smtp_config, parent=None, attachm
                     server.starttls()
                 if smtp_config.get("user"):
                     server.login(smtp_config["user"], smtp_config["password"])
-                server.sendmail(smtp_config["from"], [m.get("mail", "")], msg.as_string())
+                server.sendmail(smtp_config["from"], [m["mail"] if m["mail"] else ""], msg.as_string())
         except Exception as e:
-            errors.append(f"{m.get('mail', '')}: {e}")
+            errors.append(f"{m['mail'] if m['mail'] else ''}: {e}")
 
     if errors:
         QMessageBox.warning(parent, "Envoi partiel", "Certaines adresses ont échoué:\n" + "\n".join(errors))

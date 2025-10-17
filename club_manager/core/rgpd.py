@@ -24,4 +24,4 @@ def purge_rgpd():
 
 def is_rgpd_ready(member):
     """Vérifie si le membre coche toutes les cases RGPD (consentement, etc.)"""
-    return bool(member.get("rgpd"))
+    return bool(member["rgpd"] if member["rgpd"] is not None else 0)

@@ -74,10 +74,12 @@ class ExportsTab(QtWidgets.QWidget, Ui_ExportsTab):
             
             if file_path:
                 with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
-                    fieldnames = data[0].keys()
+                    # Convert sqlite3.Row objects to dicts for CSV export
+                    data_list = [dict(row) for row in data]
+                    fieldnames = data_list[0].keys()
                     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                     writer.writeheader()
-                    writer.writerows(data)
+                    writer.writerows(data_list)
                 
                 QtWidgets.QMessageBox.information(
                     self,

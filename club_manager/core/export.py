@@ -116,7 +116,7 @@ def export_to_pdf(data, data_type, selected_fields=None, parent=None):
         for item in data:
             row = []
             for field in fields:
-                value = item.get(field, '')
+                value = item[field] if field in item else ''
                 # Formater les valeurs booléennes
                 if isinstance(value, bool):
                     value = 'Oui' if value else 'Non'
