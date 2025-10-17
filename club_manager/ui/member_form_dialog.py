@@ -7,7 +7,7 @@ Connexion de tous les boutons/actions à des slots effectifs.
 Dépendances : PyQt5, Ui_MemberFormDialog généré par pyuic5 à partir de resources/ui/member_form_dialog.ui
 """
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from club_manager.ui.member_form_dialog_ui import Ui_MemberFormDialog
 from club_manager.core.mjc_clubs import get_all_mjc_clubs
 
@@ -31,13 +31,21 @@ class MemberFormDialog(QtWidgets.QDialog, Ui_MemberFormDialog):
         self.load_mjc_clubs()
     
     def load_mjc_clubs(self):
-        """Charge la liste des clubs MJC dans le combobox."""
+        """Charge la liste des clubs MJC dans le combobox et la liste."""
         try:
             clubs = get_all_mjc_clubs()
+            # Charger dans le combobox pour le club où la cotisation MJC a été payée
             self.comboMJCClub.clear()
             self.comboMJCClub.addItem("-- Sélectionner un club MJC --", None)
             for club in clubs:
                 self.comboMJCClub.addItem(club['name'], club['id'])
+            
+            # Charger dans la liste pour les autres clubs MJC
+            self.listOtherMJCClubs.clear()
+            for club in clubs:
+                item = QtWidgets.QListWidgetItem(club['name'])
+                item.setData(QtCore.Qt.UserRole, club['id'])
+                self.listOtherMJCClubs.addItem(item)
         except:
             pass  # La base n'est peut-être pas encore initialisée
 
@@ -132,3 +140,30 @@ class MemberFormDialog(QtWidgets.QDialog, Ui_MemberFormDialog):
         if date.isValid() and date.year() > 1900:
             return date.toString("yyyy-MM-dd")
         return None
+    
+    def get_other_mjc_clubs(self):
+        """Retourne la liste des IDs des autres clubs MJC sélectionnés sous forme de chaîne JSON."""
+        import json
+        selected_ids = []
+        for i in range(self.listOtherMJCClubs.count()):
+            item = self.listOtherMJCClubs.item(i)
+            if item.isSelected():
+                club_id = item.data(QtCore.Qt.UserRole)
+                if club_id:
+                    selected_ids.append(club_id)
+        return json.dumps(selected_ids) if selected_ids else None
+    
+    def set_other_mjc_clubs(self, other_clubs_json):
+        """Définit les clubs MJC sélectionnés à partir d'une chaîne JSON."""
+        import json
+        if not other_clubs_json:
+            return
+        try:
+            club_ids = json.loads(other_clubs_json)
+            for i in range(self.listOtherMJCClubs.count()):
+                item = self.listOtherMJCClubs.item(i)
+                club_id = item.data(QtCore.Qt.UserRole)
+                if club_id in club_ids:
+                    item.setSelected(True)
+        except:
+            pass
