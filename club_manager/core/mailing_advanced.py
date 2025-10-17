@@ -37,11 +37,11 @@ def send_mass_mail(subject, template, members, smtp_config, parent=None, attachm
     errors = []
     for m in members:
         msg = MIMEMultipart()
-        context = {k: m[k] or "" for k in m.keys()}
+        context = {k: m[k] if m[k] is not None else "" for k in m.keys()}
         msg.attach(MIMEText(personalize_template(template, context), "plain", "utf-8"))
         msg["Subject"] = subject
         msg["From"] = smtp_config["from"]
-        msg["To"] = m["mail"] or ""
+        msg["To"] = m["mail"] if m["mail"] is not None else ""
 
         # Ajout pièces jointes
         if attachments:
@@ -58,9 +58,9 @@ def send_mass_mail(subject, template, members, smtp_config, parent=None, attachm
                     server.starttls()
                 if smtp_config.get("user"):
                     server.login(smtp_config["user"], smtp_config["password"])
-                server.sendmail(smtp_config["from"], [m["mail"] or ""], msg.as_string())
+                server.sendmail(smtp_config["from"], [m["mail"] if m["mail"] is not None else ""], msg.as_string())
         except Exception as e:
-            errors.append(f"{m['mail'] or ''}: {e}")
+            errors.append(f"{m['mail'] if m['mail'] is not None else ''}: {e}")
 
     if errors:
         QMessageBox.warning(parent, "Envoi partiel", "Certaines adresses ont échoué:\n" + "\n".join(errors))
