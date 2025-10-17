@@ -26,8 +26,9 @@ def test_tutorial_steps_updated():
     assert steps_match, "Could not find steps list in tutorial_dialog.py"
     
     steps_text = steps_match.group(1)
-    # Count the number of steps (each step is a string)
-    step_count = len(re.findall(r'"[^"]*(?:\\.[^"]*)*"', steps_text))
+    # Count the number of steps by counting commas + 1 (simpler and safer)
+    # Each step is separated by a comma in the list
+    step_count = steps_text.count('",') + 1
     
     # Vérifier le nombre d'étapes (12 étapes pour la v2.3)
     assert step_count == 12, f"Expected 12 tutorial steps, got {step_count}"
