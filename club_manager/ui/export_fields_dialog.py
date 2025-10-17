@@ -7,7 +7,7 @@ Connexion de tous les boutons/actions à des slots effectifs.
 Dépendances : PyQt5, Ui_ExportFieldsDialog généré par pyuic5 à partir de resources/ui/export_fields_dialog.ui
 """
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from club_manager.ui.export_fields_dialog_ui import Ui_ExportFieldsDialog
 
 class ExportFieldsDialog(QtWidgets.QDialog, Ui_ExportFieldsDialog):
