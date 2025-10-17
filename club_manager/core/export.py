@@ -78,7 +78,9 @@ def export_to_pdf(data, data_type, selected_fields=None, parent=None):
     
     try:
         # Convert sqlite3.Row objects to dictionaries for proper field access
-        data = [dict(row) for row in data]
+        # The 'field in item' check (line 134) doesn't work with sqlite3.Row objects
+        if data and not isinstance(data[0], dict):
+            data = [dict(row) for row in data]
         
         # Déterminer les champs à afficher
         if selected_fields:
