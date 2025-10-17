@@ -267,12 +267,120 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
 
     def filter_members(self):
         """Filtre les membres selon les critères saisis."""
-        # TODO: Implémenter le filtrage avec les widgets de filtres disponibles
-        QtWidgets.QMessageBox.information(
-            self,
-            "Filtre",
-            "La fonctionnalité de filtrage sera implémentée prochainement."
-        )
+        from club_manager.ui.member_filter_dialog import MemberFilterDialog
+        from club_manager.core.members import get_filtered_members
+        from club_manager.core.mjc_clubs import get_mjc_club_by_id
+        
+        # Ouvrir le dialogue de filtrage
+        dlg = MemberFilterDialog(self)
+        if dlg.exec_() == QtWidgets.QDialog.Accepted:
+            filters = dlg.get_filters()
+            
+            if not filters:
+                QtWidgets.QMessageBox.information(
+                    self,
+                    "Aucun filtre",
+                    "Aucun critère de filtrage n'a été saisi."
+                )
+                return
+            
+            try:
+                # Stocker les filtres actuels
+                self._current_filter = filters
+                
+                # Récupérer les membres filtrés
+                members = get_filtered_members(filters)
+                
+                # Mettre à jour le tableau
+                self.tableMembers.setRowCount(0)
+                
+                if not members:
+                    QtWidgets.QMessageBox.information(
+                        self,
+                        "Aucun résultat",
+                        "Aucun membre ne correspond aux critères de recherche."
+                    )
+                    return
+                
+                # Afficher les membres filtrés
+                for row_idx, member in enumerate(members):
+                    self.tableMembers.insertRow(row_idx)
+                    
+                    # Nom, Prénom, Adresse, CP, Ville, Tél, Mail
+                    self.tableMembers.setItem(row_idx, 0, QtWidgets.QTableWidgetItem(str(member['last_name'] or '')))
+                    self.tableMembers.setItem(row_idx, 1, QtWidgets.QTableWidgetItem(str(member['first_name'] or '')))
+                    self.tableMembers.setItem(row_idx, 2, QtWidgets.QTableWidgetItem(str(member['address'] or '')))
+                    self.tableMembers.setItem(row_idx, 3, QtWidgets.QTableWidgetItem(str(member['postal_code'] or '')))
+                    self.tableMembers.setItem(row_idx, 4, QtWidgets.QTableWidgetItem(str(member['city'] or '')))
+                    self.tableMembers.setItem(row_idx, 5, QtWidgets.QTableWidgetItem(str(member['phone'] or '')))
+                    self.tableMembers.setItem(row_idx, 6, QtWidgets.QTableWidgetItem(str(member['mail'] or '')))
+                    
+                    # Date de naissance (formatée dd/MM/yyyy)
+                    birth_date_str = ''
+                    if member['birth_date']:
+                        from PyQt5.QtCore import QDate
+                        date = QDate.fromString(member['birth_date'], "yyyy-MM-dd")
+                        if date.isValid():
+                            birth_date_str = date.toString("dd/MM/yyyy")
+                    self.tableMembers.setItem(row_idx, 7, QtWidgets.QTableWidgetItem(birth_date_str))
+                    
+                    # RGPD, Droit image
+                    self.tableMembers.setItem(row_idx, 8, QtWidgets.QTableWidgetItem('Oui' if member['rgpd'] else 'Non'))
+                    self.tableMembers.setItem(row_idx, 9, QtWidgets.QTableWidgetItem('Oui' if member['image_rights'] else 'Non'))
+                    
+                    # Montants de paiement
+                    self.tableMembers.setItem(row_idx, 10, QtWidgets.QTableWidgetItem(str(member['cash_amount'] if member['cash_amount'] is not None else '0')))
+                    self.tableMembers.setItem(row_idx, 11, QtWidgets.QTableWidgetItem(str(member['check1_amount'] if member['check1_amount'] is not None else '0')))
+                    self.tableMembers.setItem(row_idx, 12, QtWidgets.QTableWidgetItem(str(member['check2_amount'] if member['check2_amount'] is not None else '0')))
+                    self.tableMembers.setItem(row_idx, 13, QtWidgets.QTableWidgetItem(str(member['check3_amount'] if member['check3_amount'] is not None else '0')))
+                    self.tableMembers.setItem(row_idx, 14, QtWidgets.QTableWidgetItem(str(member['ancv_amount'] if member['ancv_amount'] is not None else '0')))
+                    self.tableMembers.setItem(row_idx, 15, QtWidgets.QTableWidgetItem(str(member['total_paid'] if member['total_paid'] is not None else '0')))
+                    
+                    # Club MJC cotisation
+                    mjc_club_name = ''
+                    if member['mjc_club_id']:
+                        try:
+                            mjc_club = get_mjc_club_by_id(member['mjc_club_id'])
+                            if mjc_club:
+                                mjc_club_name = mjc_club['name']
+                        except:
+                            pass
+                    self.tableMembers.setItem(row_idx, 16, QtWidgets.QTableWidgetItem(mjc_club_name))
+                    
+                    # Autres clubs MJC
+                    other_clubs_str = ''
+                    if member['other_mjc_clubs']:
+                        try:
+                            club_ids = json.loads(member['other_mjc_clubs'])
+                            club_names = []
+                            for club_id in club_ids:
+                                club = get_mjc_club_by_id(club_id)
+                                if club:
+                                    club_names.append(club['name'])
+                            other_clubs_str = ', '.join(club_names)
+                        except (json.JSONDecodeError, TypeError, ValueError):
+                            pass
+                    self.tableMembers.setItem(row_idx, 17, QtWidgets.QTableWidgetItem(other_clubs_str))
+                    
+                    # Statut cotisation
+                    self.tableMembers.setItem(row_idx, 18, QtWidgets.QTableWidgetItem(str(member['cotisation_status'] or 'Non payée')))
+                    
+                    # Stocker l'ID du membre dans la première colonne avec Qt.UserRole
+                    self.tableMembers.item(row_idx, 0).setData(Qt.UserRole, member['id'])
+                
+                # Afficher un message de confirmation
+                QtWidgets.QMessageBox.information(
+                    self,
+                    "Filtrage réussi",
+                    f"{len(members)} membre(s) correspond(ent) aux critères de recherche."
+                )
+                
+            except Exception as e:
+                QtWidgets.QMessageBox.critical(
+                    self,
+                    "Erreur de filtrage",
+                    f"Erreur lors du filtrage : {str(e)}"
+                )
 
     def reset_filter(self):
         """Réinitialise tous les filtres et recharge tous les membres."""
