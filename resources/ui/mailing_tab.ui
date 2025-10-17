@@ -11,7 +11,13 @@
     </layout>
    </item>
    <item>
-    <widget class="QTextEdit" name="textEditMail">
+    <layout class="QHBoxLayout" name="horizontalLayoutSubject">
+     <item><widget class="QLabel" name="labelSubject"><property name="text"><string>Objet :</string></property></widget></item>
+     <item><widget class="QLineEdit" name="editSubject"><property name="placeholderText"><string>Saisissez l'objet du mail...</string></property></widget></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTextEdit" name="editBody">
      <property name="placeholderText"><string>Rédigez votre message ici...</string></property>
     </widget>
    </item>

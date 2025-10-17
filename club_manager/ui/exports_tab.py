@@ -7,7 +7,7 @@ Connexion de tous les boutons/actions à des slots effectifs.
 Dépendances : PyQt5, Ui_ExportsTab généré par pyuic5 à partir de resources/ui/exports_tab.ui
 """
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from club_manager.ui.exports_tab_ui import Ui_ExportsTab
 import csv
 import os
@@ -88,13 +88,115 @@ class ExportsTab(QtWidgets.QWidget, Ui_ExportsTab):
             QtWidgets.QMessageBox.critical(self, "Erreur d'export", f"Erreur lors de l'export : {str(e)}")
 
     def export_pdf(self):
-        """Exporte les données en PDF (fonctionnalité à implémenter)."""
-        QtWidgets.QMessageBox.information(
+        """Exporte les données en PDF avec possibilité de sélectionner les champs."""
+        from club_manager.core.export import export_to_pdf
+        
+        # Demander quel type de données exporter
+        choice, ok = QtWidgets.QInputDialog.getItem(
             self,
-            "Export PDF",
-            "L'export PDF sera disponible dans une prochaine version.\n"
-            "Utilisez l'export CSV en attendant."
+            "Type d'export PDF",
+            "Que souhaitez-vous exporter ?",
+            ["Membres", "Postes", "Clubs MJC", "Prix annuels"],
+            0,
+            False
         )
+        
+        if not ok:
+            return
+        
+        try:
+            data = []
+            
+            if choice == "Membres":
+                from club_manager.core.members import get_all_members
+                data = get_all_members()
+            elif choice == "Postes":
+                from club_manager.core.positions import get_all_positions
+                data = get_all_positions()
+            elif choice == "Clubs MJC":
+                from club_manager.core.mjc_clubs import get_all_mjc_clubs
+                data = get_all_mjc_clubs()
+            elif choice == "Prix annuels":
+                from club_manager.core.annual_prices import get_all_annual_prices
+                data = get_all_annual_prices()
+            
+            if not data:
+                QtWidgets.QMessageBox.information(self, "Export PDF", f"Aucune donnée à exporter pour {choice}.")
+                return
+            
+            # Demander si l'utilisateur veut sélectionner les champs
+            reply = QtWidgets.QMessageBox.question(
+                self,
+                "Sélection des champs",
+                "Voulez-vous sélectionner les champs à exporter ?\n\n"
+                "Oui : Sélectionner les champs spécifiques\n"
+                "Non : Exporter tous les champs",
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No
+            )
+            
+            selected_fields = None
+            if reply == QtWidgets.QMessageBox.Yes:
+                selected_fields = self._select_export_fields(data[0].keys())
+                if not selected_fields:
+                    return
+            
+            # Exporter en PDF
+            export_to_pdf(data, choice, selected_fields, parent=self)
+            
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(self, "Erreur d'export PDF", f"Erreur lors de l'export : {str(e)}")
+    
+    def _select_export_fields(self, available_fields):
+        """Ouvre un dialogue pour sélectionner les champs à exporter."""
+        dialog = QtWidgets.QDialog(self)
+        dialog.setWindowTitle("Sélectionner les champs à exporter")
+        dialog.resize(400, 500)
+        
+        layout = QtWidgets.QVBoxLayout(dialog)
+        
+        label = QtWidgets.QLabel("Sélectionnez les champs à inclure dans l'export :")
+        layout.addWidget(label)
+        
+        # Liste des champs avec checkboxes
+        list_widget = QtWidgets.QListWidget()
+        list_widget.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
+        
+        for field in available_fields:
+            # Formater le nom du champ pour l'affichage
+            display_name = field.replace('_', ' ').title()
+            item = QtWidgets.QListWidgetItem(display_name)
+            item.setData(QtCore.Qt.UserRole, field)
+            list_widget.addItem(item)
+            # Sélectionner par défaut
+            item.setSelected(True)
+        
+        layout.addWidget(list_widget)
+        
+        # Boutons de sélection rapide
+        btn_layout = QtWidgets.QHBoxLayout()
+        btn_select_all = QtWidgets.QPushButton("Tout sélectionner")
+        btn_select_all.clicked.connect(list_widget.selectAll)
+        btn_layout.addWidget(btn_select_all)
+        
+        btn_deselect_all = QtWidgets.QPushButton("Tout désélectionner")
+        btn_deselect_all.clicked.connect(list_widget.clearSelection)
+        btn_layout.addWidget(btn_deselect_all)
+        
+        layout.addLayout(btn_layout)
+        
+        # Boutons OK/Annuler
+        buttons = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel
+        )
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        layout.addWidget(buttons)
+        
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            selected = [item.data(QtCore.Qt.UserRole) for item in list_widget.selectedItems()]
+            return selected if selected else None
+        
+        return None
 
     def select_fields(self):
         """Ouvre un dialogue pour sélectionner les champs à exporter."""

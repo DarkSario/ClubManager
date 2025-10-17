@@ -6,13 +6,13 @@ Club Manager est une application de gestion complète pour les associations spor
 
 - **Gestion des membres** : Ajout, modification, suppression et recherche d'adhérents
 - **Gestion des prix annuels** : Configuration des prix Club et MJC pour chaque année
-- **Gestion des clubs MJC** : Enregistrement des autres clubs MJC partenaires
+- **Gestion des clubs MJC** : Enregistrement des autres clubs MJC partenaires (avec import en masse)
 - **Système multi-bases** : Une base de données par saison/année pour faciliter la gestion (remplace l'ancien système de sessions)
 - **Gestion des postes** : Attribution des responsabilités au sein du club
-- **Exports** : Export des données en CSV ou PDF
-- **Mailing** : Envoi d'emails groupés aux adhérents
+- **Exports** : Export des données en CSV ou PDF (avec sélection de champs)
+- **Mailing** : Envoi d'emails groupés aux adhérents (avec champ objet)
 - **Audit** : Traçabilité des modifications
-- **Sauvegarde/Restauration** : Backup et restauration des données
+- **Sauvegarde/Restauration** : Backup et restauration des données (format ZIP complet)
 - **Conformité RGPD** : Gestion des consentements et des données personnelles
 - **Thèmes personnalisables** : Interface adaptable selon vos préférences
 
@@ -79,12 +79,20 @@ Si vous souhaitez reprendre certains membres de la saison précédente :
 
 - Python 3.8 ou supérieur
 - PyQt5
+- pandas
+- reportlab (pour les exports PDF)
 - SQLite3 (généralement inclus avec Python)
 
 ### Installation des dépendances
 
 ```bash
-pip install PyQt5
+pip install -r requirements.txt
+```
+
+Ou manuellement :
+
+```bash
+pip install PyQt5 pandas reportlab
 ```
 
 ### Lancement de l'application
@@ -136,6 +144,24 @@ Le tableau se rafraîchit automatiquement après l'ajout.
 3. Cliquez sur **"Ajouter"** pour l'enregistrer
 4. Ces clubs apparaîtront dans le formulaire membre pour les adhérents ayant réglé leur part MJC ailleurs
 
+#### Import en masse de clubs MJC (Nouveau v2.3)
+
+Pour importer plusieurs clubs d'un coup :
+
+1. Cliquez sur **"Importer/Coller une liste"**
+2. Deux options :
+   - **Copier-coller** : Collez une liste de clubs (un par ligne)
+   - **Depuis un fichier** : Cliquez sur "Charger depuis un fichier" et sélectionnez un fichier .txt
+3. Les doublons sont automatiquement ignorés
+4. Un rapport indique le nombre de clubs ajoutés et ignorés
+
+Format du fichier texte :
+```
+MJC Centre
+MJC Nord
+MJC Sud
+```
+
 ### Note sur les Sessions et Cotisations
 
 L'onglet Sessions a été supprimé de l'interface. Le système multi-bases (une base = une saison) remplace maintenant complètement la fonctionnalité de sessions. Les données de sessions restent disponibles dans la base pour la compatibilité, mais l'interface de gestion a été retirée pour simplifier l'utilisation.
@@ -153,11 +179,68 @@ L'onglet Cotisations a également été supprimé. La gestion des paiements est 
 - **Fichier → Exporter une sauvegarde...**
 - Choisissez un emplacement et un nom pour le fichier de sauvegarde
 
+### Export ZIP complet (Nouveau v2.3)
+
+Pour créer une archive complète de votre base :
+
+1. Accédez à l'onglet **"Sauvegarde"**
+2. Cliquez sur **"Exporter (zip)"**
+3. Choisissez l'emplacement pour l'archive
+4. L'archive contient :
+   - La base de données complète
+   - La configuration de l'application
+
 ### Restaurer une sauvegarde
 
 - **Fichier → Restaurer une sauvegarde...**
 - Sélectionnez le fichier de sauvegarde
 - **Attention** : Cette opération remplacera les données actuelles
+
+### Import ZIP (Nouveau v2.3)
+
+Pour restaurer une archive ZIP :
+
+1. Accédez à l'onglet **"Sauvegarde"**
+2. Cliquez sur **"Importer (zip)"**
+3. Sélectionnez l'archive à importer
+4. Choisissez où enregistrer la base restaurée
+5. Option de restaurer ou non la configuration
+
+## Exports de données
+
+### Export CSV
+
+1. Accédez à l'onglet **"Exports"**
+2. Cliquez sur **"Exporter CSV"**
+3. Sélectionnez le type de données (Membres, Postes, Clubs MJC, Prix annuels)
+4. Choisissez l'emplacement du fichier
+
+### Export PDF (Nouveau v2.3)
+
+Pour créer un export PDF professionnel :
+
+1. Accédez à l'onglet **"Exports"**
+2. Cliquez sur **"Exporter PDF"**
+3. Sélectionnez le type de données à exporter
+4. Choisissez d'exporter tous les champs ou seulement certains
+5. Si sélection : cochez les champs souhaités
+6. Le PDF généré contient :
+   - En-tête avec titre et date
+   - Table formatée avec vos données
+   - Total d'éléments exportés
+
+## Mailing groupé (Nouveau v2.3)
+
+### Utilisation avec champ Objet
+
+1. Accédez à l'onglet **"Mailing"**
+2. Cliquez sur **"Sélection destinataires"** pour choisir les membres
+3. Remplissez le champ **"Objet"** (obligatoire)
+4. Rédigez votre message dans le champ corps
+5. Cliquez sur **"Prévisualiser"** pour voir le rendu final
+6. Cliquez sur **"Envoyer"** pour envoyer le mail
+
+Note : La fonctionnalité d'envoi nécessite une configuration SMTP (à venir).
 
 ## Conformité RGPD
 
@@ -180,6 +263,15 @@ Pour signaler un bug ou proposer une amélioration :
 Tous droits réservés.
 
 ## Historique des versions
+
+### Version 2.3 (Décembre 2024)
+- ✨ **Export/Import ZIP complet** : Sauvegarde et restauration complète avec barre de progression
+- ✨ **Export PDF professionnel** : Export des données au format PDF avec sélection de champs
+- ✨ **Champ Objet dans Mailing** : Ajout d'un champ sujet éditable pour les mails groupés
+- ✨ **Import de liste de clubs MJC** : Import en masse par copier-coller ou fichier texte
+- 📦 Nouvelle dépendance : reportlab pour la génération de fichiers PDF
+- 📝 Documentation complète dans IMPLEMENTATION_V2.3.md
+- ✅ Tests complets pour toutes les nouvelles fonctionnalités
 
 ### Version 2.2 (Novembre 2024)
 - ✨ **Gestion annuelle des prix Club/MJC** : Configuration des prix pour chaque année
