@@ -8,6 +8,9 @@ import sys
 import os
 from pathlib import Path
 import tempfile
+import sqlite3
+import traceback
+from contextlib import contextmanager
 
 # Ajouter le répertoire parent au path pour pouvoir importer club_manager
 project_root = Path(__file__).parent
@@ -17,10 +20,9 @@ from club_manager.core.database import Database
 from club_manager.core.members import add_member, get_all_members, get_member_by_id, update_member, delete_member
 from club_manager.core.annual_prices import add_annual_price, get_all_annual_prices, get_current_annual_price, update_annual_price
 
-def test_member_payment_fields():
-    """Test des nouveaux champs de paiement du formulaire membre."""
-    print("\nTest 1: Nouveaux champs de paiement...")
-    
+@contextmanager
+def temporary_database():
+    """Context manager pour créer et nettoyer une base de données temporaire."""
     # Réinitialiser le singleton
     Database._instance = None
     Database._current_db_path = None
@@ -29,6 +31,18 @@ def test_member_payment_fields():
     os.close(fd)
     
     try:
+        yield db_path
+    finally:
+        try:
+            Path(db_path).unlink(missing_ok=True)
+        except Exception:
+            pass  # Ignorer les erreurs de nettoyage
+
+def test_member_payment_fields():
+    """Test des nouveaux champs de paiement du formulaire membre."""
+    print("\nTest 1: Nouveaux champs de paiement...")
+    
+    with temporary_database() as db_path:
         db = Database.instance(db_path)
         
         # Ajouter un membre avec tous les champs de paiement
@@ -100,23 +114,13 @@ def test_member_payment_fields():
         assert updated_member['total_paid'] == 100.0, "Total paid update failed"
         assert updated_member['ancv_amount'] == 20.0, "ANCV update failed"
         print("✓ Modification des champs de paiement réussie")
-        
-    finally:
-        os.unlink(db_path)
 
 def test_database_migration():
     """Test de la migration des bases de données existantes."""
     print("\nTest 2: Migration de base existante...")
     
-    Database._instance = None
-    Database._current_db_path = None
-    
-    fd, db_path = tempfile.mkstemp(suffix='.db')
-    os.close(fd)
-    
-    try:
+    with temporary_database() as db_path:
         # Créer une "ancienne" base avec les anciens champs
-        import sqlite3
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         cursor.execute("""
@@ -161,21 +165,12 @@ def test_database_migration():
         assert len(members) == 1, "Migration lost existing data"
         assert members[0]['last_name'] == 'Test', "Migration corrupted data"
         print("✓ Migration réussie: données existantes préservées")
-        
-    finally:
-        os.unlink(db_path)
 
 def test_annual_prices_workflow():
     """Test du workflow de configuration des tarifs."""
     print("\nTest 3: Workflow de gestion des tarifs...")
     
-    Database._instance = None
-    Database._current_db_path = None
-    
-    fd, db_path = tempfile.mkstemp(suffix='.db')
-    os.close(fd)
-    
-    try:
+    with temporary_database() as db_path:
         db = Database.instance(db_path)
         
         # Simuler la configuration initiale
@@ -208,21 +203,12 @@ def test_annual_prices_workflow():
         current_count = sum(1 for p in all_prices if p['is_current'] == 1)
         assert current_count == 1, f"Should have exactly 1 current price, got {current_count}"
         print("✓ Un seul tarif courant à la fois")
-        
-    finally:
-        os.unlink(db_path)
 
 def test_member_validation():
     """Test de la validation des champs obligatoires."""
     print("\nTest 4: Validation des champs...")
     
-    Database._instance = None
-    Database._current_db_path = None
-    
-    fd, db_path = tempfile.mkstemp(suffix='.db')
-    os.close(fd)
-    
-    try:
+    with temporary_database() as db_path:
         db = Database.instance(db_path)
         
         # Test avec montants valides
@@ -251,26 +237,18 @@ def test_member_validation():
         assert len(members) == 1, "Member not added"
         print("✓ Validation: montants valides acceptés")
         
-        # Vérifier les montants décimaux
+        # Vérifier les montants décimaux avec math.isclose pour plus de précision
         member = members[0]
-        assert abs(member['cash_amount'] - 50.5) < 0.01, "Decimal values not preserved"
-        assert abs(member['check1_amount'] - 25.75) < 0.01, "Decimal values not preserved"
+        import math
+        assert math.isclose(member['cash_amount'], 50.5, rel_tol=1e-9), "Decimal values not preserved"
+        assert math.isclose(member['check1_amount'], 25.75, rel_tol=1e-9), "Decimal values not preserved"
         print("✓ Validation: montants décimaux corrects")
-        
-    finally:
-        os.unlink(db_path)
 
 def test_complete_workflow():
     """Test du workflow complet: création base → configuration tarifs → ajout membre."""
     print("\nTest 5: Workflow complet...")
     
-    Database._instance = None
-    Database._current_db_path = None
-    
-    fd, db_path = tempfile.mkstemp(suffix='.db')
-    os.close(fd)
-    
-    try:
+    with temporary_database() as db_path:
         # 1. Créer une nouvelle base
         db = Database.instance(db_path)
         print("✓ Base de données créée")
@@ -324,9 +302,6 @@ def test_complete_workflow():
         members = get_all_members()
         assert len(members) == 1, "Member lost after price update"
         print("✓ Données membre préservées après modification tarifs")
-        
-    finally:
-        os.unlink(db_path)
 
 def main():
     print("=" * 60)
@@ -352,7 +327,6 @@ def main():
             failed += 1
             print(f"✗ Test échoué: {test.__name__}")
             print(f"  Erreur: {str(e)}")
-            import traceback
             traceback.print_exc()
     
     print("\n" + "=" * 60)
