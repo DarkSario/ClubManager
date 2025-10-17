@@ -60,6 +60,7 @@ class Database:
                 total_paid REAL DEFAULT 0,
                 mjc_club_id INTEGER,
                 cotisation_status TEXT,
+                birth_date TEXT,
                 FOREIGN KEY(mjc_club_id) REFERENCES mjc_clubs(id)
             );
             CREATE TABLE IF NOT EXISTS positions (
@@ -125,6 +126,8 @@ class Database:
             cursor.execute("ALTER TABLE members ADD COLUMN check3_amount REAL DEFAULT 0")
         if 'total_paid' not in columns:
             cursor.execute("ALTER TABLE members ADD COLUMN total_paid REAL DEFAULT 0")
+        if 'birth_date' not in columns:
+            cursor.execute("ALTER TABLE members ADD COLUMN birth_date TEXT")
         
         # SQLite ne supporte pas DROP COLUMN directement avant version 3.35.0
         # On va créer une nouvelle table et copier les données
@@ -144,6 +147,7 @@ class Database:
                     total_paid REAL DEFAULT 0,
                     mjc_club_id INTEGER,
                     cotisation_status TEXT,
+                    birth_date TEXT,
                     FOREIGN KEY(mjc_club_id) REFERENCES mjc_clubs(id)
                 )
             """)
@@ -154,7 +158,7 @@ class Database:
             new_table_columns = ['id', 'last_name', 'first_name', 'address', 'postal_code', 'city',
                                 'phone', 'mail', 'rgpd', 'image_rights', 'payment_type', 
                                 'ancv_amount', 'cash_amount', 'check1_amount', 'check2_amount', 
-                                'check3_amount', 'total_paid', 'mjc_club_id', 'cotisation_status']
+                                'check3_amount', 'total_paid', 'mjc_club_id', 'cotisation_status', 'birth_date']
             columns_to_copy = [col for col in common_columns if col in new_table_columns]
             
             if columns_to_copy:

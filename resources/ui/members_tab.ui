@@ -36,13 +36,37 @@
       <property name="text"><string>Mail</string></property>
      </column>
      <column>
+      <property name="text"><string>Date naissance</string></property>
+     </column>
+     <column>
       <property name="text"><string>RGPD</string></property>
      </column>
      <column>
       <property name="text"><string>Droit image</string></property>
      </column>
      <column>
-      <property name="text"><string>Cotisation</string></property>
+      <property name="text"><string>Espèce</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Chèque 1</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Chèque 2</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Chèque 3</string></property>
+     </column>
+     <column>
+      <property name="text"><string>ANCV</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Total</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Club MJC</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Statut cotisation</string></property>
      </column>
     </widget>
    </item>
