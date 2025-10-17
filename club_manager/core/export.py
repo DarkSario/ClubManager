@@ -5,6 +5,7 @@ Utilise pandas pour CSV, ReportLab pour PDF.
 """
 
 import csv
+import json
 import os
 from datetime import datetime
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
@@ -94,15 +95,48 @@ def resolve_mjc_club_names(data):
             club_id = item_copy['mjc_club_id']
             item_copy['mjc_club_id'] = club_map.get(club_id, str(club_id))
         
-        # Résoudre other_mjc_clubs (liste d'IDs séparés par des virgules)
+        # Résoudre other_mjc_clubs (liste d'IDs au format JSON ou séparés par des virgules)
         if 'other_mjc_clubs' in item_copy and item_copy['other_mjc_clubs']:
             try:
-                # Séparer les IDs, les résoudre, et les rejoindre
-                club_ids = [int(id.strip()) for id in str(item_copy['other_mjc_clubs']).split(',')]
-                club_names = [club_map.get(club_id, str(club_id)) for club_id in club_ids]
-                item_copy['other_mjc_clubs'] = ', '.join(club_names)
-            except (ValueError, AttributeError):
-                # Si on ne peut pas parser, garder la valeur originale
+                value = item_copy['other_mjc_clubs']
+                club_ids = []
+                
+                # Essayer de parser comme JSON array d'abord (format: "[5]" ou "[5,3]")
+                try:
+                    parsed = json.loads(value) if isinstance(value, str) else value
+                    if isinstance(parsed, list):
+                        club_ids = parsed
+                    else:
+                        club_ids = [parsed]
+                except (json.JSONDecodeError, TypeError):
+                    # Si ce n'est pas du JSON, essayer de séparer par virgule
+                    parts = str(value).split(',')
+                    for part in parts:
+                        try:
+                            club_ids.append(int(part.strip()))
+                        except ValueError:
+                            # Ignorer les valeurs invalides plutôt que d'échouer
+                            pass
+                
+                # Convertir en liste d'entiers de manière défensive
+                valid_club_ids = []
+                for id_val in club_ids:
+                    try:
+                        if isinstance(id_val, int):
+                            valid_club_ids.append(id_val)
+                        elif isinstance(id_val, str) and id_val.strip().isdigit():
+                            valid_club_ids.append(int(id_val.strip()))
+                        # Autres types ou valeurs invalides sont ignorés
+                    except (ValueError, TypeError):
+                        # Ignorer les IDs invalides plutôt que d'échouer
+                        pass
+                
+                # Résoudre les IDs en noms de clubs
+                if valid_club_ids:
+                    club_names = [club_map.get(club_id, str(club_id)) for club_id in valid_club_ids]
+                    item_copy['other_mjc_clubs'] = ', '.join(club_names)
+            except (AttributeError, ValueError, TypeError):
+                # Si on ne peut pas parser ou si une erreur inattendue survient, garder la valeur originale
                 pass
         
         resolved_data.append(item_copy)
@@ -266,10 +300,10 @@ def export_to_pdf(data, data_type, selected_fields=None, parent=None):
                 col_widths.append(0.5 * inch)
             # Colonnes moyennes (noms, dates, montants)
             elif field in ['last_name', 'first_name', 'name', 'year', 'type', 'cotisation_status', 
-                          'payment_type', 'birth_date', 'created_date']:
+                          'payment_type', 'birth_date', 'created_date', 'mjc_club_id']:
                 col_widths.append(1.0 * inch)
-            # Colonnes larges (adresses, descriptions, emails)
-            elif field in ['address', 'description', 'mail', 'details']:
+            # Colonnes larges (adresses, descriptions, emails, clubs multiples)
+            elif field in ['address', 'description', 'mail', 'details', 'other_mjc_clubs']:
                 col_widths.append(1.5 * inch)
             # Par défaut
             else:
