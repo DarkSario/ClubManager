@@ -24,11 +24,11 @@ class MailingTab(QtWidgets.QWidget, Ui_MailingTab):
             return
 
         # Validation des champs du formulaire
-        if hasattr(self, 'editSubject') and not self.editSubject.text():
+        if not self.editSubject.text():
             QtWidgets.QMessageBox.warning(self, "Champ obligatoire", "Le sujet du mail est obligatoire.")
             return
 
-        if hasattr(self, 'editBody') and not self.editBody.toPlainText():
+        if not self.editBody.toPlainText():
             QtWidgets.QMessageBox.warning(self, "Champ obligatoire", "Le corps du mail est obligatoire.")
             return
 
@@ -51,8 +51,8 @@ class MailingTab(QtWidgets.QWidget, Ui_MailingTab):
 
     def preview_mail(self):
         """Affiche un aperçu du mail groupé."""
-        subject = self.editSubject.text() if hasattr(self, 'editSubject') else "Sujet non disponible"
-        body = self.editBody.toPlainText() if hasattr(self, 'editBody') else "Corps non disponible"
+        subject = self.editSubject.text()
+        body = self.editBody.toPlainText()
 
         preview_text = f"<h3>Aperçu du mail</h3>"
         preview_text += f"<p><b>Sujet :</b> {subject}</p>"
