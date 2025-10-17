@@ -243,10 +243,12 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                 return
             
             with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
-                fieldnames = members[0].keys()
+                # Convert sqlite3.Row objects to dicts for CSV export
+                members_list = [dict(m) for m in members]
+                fieldnames = members_list[0].keys()
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 writer.writeheader()
-                writer.writerows(members)
+                writer.writerows(members_list)
             
             QtWidgets.QMessageBox.information(
                 self,
