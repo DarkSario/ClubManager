@@ -29,11 +29,11 @@ class Ui_MembersTab(object):
         self.horizontalLayoutTop.addWidget(self.buttonMailing)
         self.verticalLayout.addLayout(self.horizontalLayoutTop)
         self.tableMembers = QtWidgets.QTableWidget(MembersTab)
-        self.tableMembers.setColumnCount(18)
+        self.tableMembers.setColumnCount(19)
         self.tableMembers.setHorizontalHeaderLabels([
             "Nom", "Prénom", "Adresse", "CP", "Ville", "Tél", "Mail", "Date naissance", 
             "RGPD", "Droit image", "Espèce", "Chèque 1", "Chèque 2", "Chèque 3", 
-            "ANCV", "Total", "Club MJC", "Statut cotisation"
+            "ANCV", "Total", "Club MJC cotisation", "Autres clubs MJC", "Statut cotisation"
         ])
         self.verticalLayout.addWidget(self.tableMembers)
         self.horizontalLayoutFilter = QtWidgets.QHBoxLayout()

@@ -13,6 +13,7 @@ from club_manager.ui.members_tab_ui import Ui_MembersTab
 from club_manager.ui.confirmation_dialog import ConfirmationDialog
 import csv
 import os
+import json
 
 class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
     """Onglet de gestion des membres avec CRUD complet et export."""
@@ -73,7 +74,8 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                     total_paid=float(dlg.editTotalPaid.text() or '0'),
                     mjc_club_id=mjc_club_id,
                     cotisation_status=dlg.comboCotisationStatus.currentText(),
-                    birth_date=dlg.get_birth_date()
+                    birth_date=dlg.get_birth_date(),
+                    other_mjc_clubs=dlg.get_other_mjc_clubs()
                 )
                 self.refresh_members()
                 QtWidgets.QMessageBox.information(self, "Succès", "Membre ajouté avec succès.")
@@ -152,6 +154,10 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
             if index >= 0:
                 dlg.comboCotisationStatus.setCurrentIndex(index)
             
+            # Restaurer les autres clubs MJC
+            if member['other_mjc_clubs']:
+                dlg.set_other_mjc_clubs(member['other_mjc_clubs'])
+            
             if dlg.exec_() == QtWidgets.QDialog.Accepted:
                 # Récupérer le type de paiement
                 payment_type = "club_mjc" if dlg.comboPaymentType.currentIndex() == 0 else "club_only"
@@ -181,7 +187,8 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                     total_paid=float(dlg.editTotalPaid.text() or '0'),
                     mjc_club_id=mjc_club_id,
                     cotisation_status=dlg.comboCotisationStatus.currentText(),
-                    birth_date=dlg.get_birth_date()
+                    birth_date=dlg.get_birth_date(),
+                    other_mjc_clubs=dlg.get_other_mjc_clubs()
                 )
                 self.refresh_members()
                 QtWidgets.QMessageBox.information(self, "Succès", "Membre modifié avec succès.")
@@ -330,7 +337,7 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
             self.tableMembers.setItem(row_idx, 14, QtWidgets.QTableWidgetItem(str(member['ancv_amount'] if member['ancv_amount'] is not None else '0')))
             self.tableMembers.setItem(row_idx, 15, QtWidgets.QTableWidgetItem(str(member['total_paid'] if member['total_paid'] is not None else '0')))
             
-            # Club MJC
+            # Club MJC cotisation
             mjc_club_name = ''
             if member['mjc_club_id']:
                 try:
@@ -341,8 +348,23 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                     pass
             self.tableMembers.setItem(row_idx, 16, QtWidgets.QTableWidgetItem(mjc_club_name))
             
+            # Autres clubs MJC
+            other_clubs_str = ''
+            if member['other_mjc_clubs']:
+                try:
+                    club_ids = json.loads(member['other_mjc_clubs'])
+                    club_names = []
+                    for club_id in club_ids:
+                        club = get_mjc_club_by_id(club_id)
+                        if club:
+                            club_names.append(club['name'])
+                    other_clubs_str = ', '.join(club_names)
+                except (json.JSONDecodeError, TypeError, ValueError):
+                    pass
+            self.tableMembers.setItem(row_idx, 17, QtWidgets.QTableWidgetItem(other_clubs_str))
+            
             # Statut cotisation
-            self.tableMembers.setItem(row_idx, 17, QtWidgets.QTableWidgetItem(str(member['cotisation_status'] or 'Non payée')))
+            self.tableMembers.setItem(row_idx, 18, QtWidgets.QTableWidgetItem(str(member['cotisation_status'] or 'Non payée')))
             
             # Stocker l'ID du membre dans la première colonne avec Qt.UserRole
             self.tableMembers.item(row_idx, 0).setData(Qt.UserRole, member['id'])

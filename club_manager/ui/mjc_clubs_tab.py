@@ -42,6 +42,7 @@ class MJCClubsTab(QWidget):
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.table.doubleClicked.connect(self.edit_club)
         layout.addWidget(self.table)
         
         # Boutons d'action
