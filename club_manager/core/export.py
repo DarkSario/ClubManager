@@ -126,8 +126,7 @@ def resolve_mjc_club_names(data):
                             valid_club_ids.append(id_val)
                         elif isinstance(id_val, str) and id_val.strip().isdigit():
                             valid_club_ids.append(int(id_val.strip()))
-                        else:
-                            valid_club_ids.append(int(id_val))
+                        # Autres types ou valeurs invalides sont ignorés
                     except (ValueError, TypeError):
                         # Ignorer les IDs invalides plutôt que d'échouer
                         pass
@@ -136,8 +135,8 @@ def resolve_mjc_club_names(data):
                 if valid_club_ids:
                     club_names = [club_map.get(club_id, str(club_id)) for club_id in valid_club_ids]
                     item_copy['other_mjc_clubs'] = ', '.join(club_names)
-            except (ValueError, AttributeError, TypeError):
-                # Si on ne peut pas parser, garder la valeur originale
+            except AttributeError:
+                # Si on ne peut pas parser (par exemple, item_copy n'est pas un dict), garder la valeur originale
                 pass
         
         resolved_data.append(item_copy)
