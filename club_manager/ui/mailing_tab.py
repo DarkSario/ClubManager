@@ -77,7 +77,7 @@ class MailingTab(QtWidgets.QWidget, Ui_MailingTab):
                 return
 
             # Filtrer les membres ayant un email
-            members_with_email = [m for m in members if m.get('mail')]
+            members_with_email = [m for m in members if m['mail']]
 
             if not members_with_email:
                 QtWidgets.QMessageBox.warning(

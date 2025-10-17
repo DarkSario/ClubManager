@@ -124,3 +124,11 @@ class MemberFormDialog(QtWidgets.QDialog, Ui_MemberFormDialog):
             return
         
         super().accept()
+    
+    def get_birth_date(self):
+        """Retourne la date de naissance au format ISO (YYYY-MM-DD) ou None si date nulle."""
+        date = self.editBirthDate.date()
+        # Vérifier si la date est valide (QDate a une date null par défaut qui est 1/1/1)
+        if date.isValid() and date.year() > 1900:
+            return date.toString("yyyy-MM-dd")
+        return None

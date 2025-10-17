@@ -72,7 +72,8 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                     check3_amount=float(dlg.editCheck3Amount.text() or '0'),
                     total_paid=float(dlg.editTotalPaid.text() or '0'),
                     mjc_club_id=mjc_club_id,
-                    cotisation_status=dlg.comboCotisationStatus.currentText()
+                    cotisation_status=dlg.comboCotisationStatus.currentText(),
+                    birth_date=dlg.get_birth_date()
                 )
                 self.refresh_members()
                 QtWidgets.QMessageBox.information(self, "Succès", "Membre ajouté avec succès.")
@@ -106,22 +107,29 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
             # Pré-remplir le formulaire
             dlg = MemberFormDialog(self)
             dlg.setWindowTitle("Modifier un membre")
-            dlg.editLastName.setText(member.get('last_name', ''))
-            dlg.editFirstName.setText(member.get('first_name', ''))
-            dlg.editAddress.setText(member.get('address', ''))
-            dlg.editPostalCode.setText(member.get('postal_code', ''))
-            dlg.editCity.setText(member.get('city', ''))
-            dlg.editPhone.setText(member.get('phone', ''))
-            dlg.editMail.setText(member.get('mail', ''))
-            dlg.checkRGPD.setChecked(bool(member.get('rgpd', 0)))
-            dlg.checkImageRights.setChecked(bool(member.get('image_rights', 0)))
+            dlg.editLastName.setText(member['last_name'] or '')
+            dlg.editFirstName.setText(member['first_name'] or '')
+            dlg.editAddress.setText(member['address'] or '')
+            dlg.editPostalCode.setText(member['postal_code'] or '')
+            dlg.editCity.setText(member['city'] or '')
+            dlg.editPhone.setText(member['phone'] or '')
+            dlg.editMail.setText(member['mail'] or '')
+            dlg.checkRGPD.setChecked(bool(member['rgpd'] if member['rgpd'] is not None else 0))
+            dlg.checkImageRights.setChecked(bool(member['image_rights'] if member['image_rights'] is not None else 0))
+            
+            # Restaurer la date de naissance
+            from PyQt5.QtCore import QDate
+            if member['birth_date']:
+                date = QDate.fromString(member['birth_date'], "yyyy-MM-dd")
+                if date.isValid():
+                    dlg.editBirthDate.setDate(date)
             
             # Restaurer le type de paiement
-            payment_type = member.get('payment_type', 'club_mjc')
+            payment_type = member['payment_type'] if member['payment_type'] else 'club_mjc'
             if payment_type == 'club_only':
                 dlg.comboPaymentType.setCurrentIndex(1)
                 # Restaurer le club MJC sélectionné
-                mjc_club_id = member.get('mjc_club_id')
+                mjc_club_id = member['mjc_club_id']
                 if mjc_club_id:
                     for i in range(dlg.comboMJCClub.count()):
                         if dlg.comboMJCClub.itemData(i) == mjc_club_id:
@@ -131,15 +139,15 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                 dlg.comboPaymentType.setCurrentIndex(0)
             
             # Restaurer les montants de paiement
-            dlg.editCashAmount.setText(str(member.get('cash_amount', 0) or 0))
-            dlg.editCheck1Amount.setText(str(member.get('check1_amount', 0) or 0))
-            dlg.editCheck2Amount.setText(str(member.get('check2_amount', 0) or 0))
-            dlg.editCheck3Amount.setText(str(member.get('check3_amount', 0) or 0))
-            dlg.editTotalPaid.setText(str(member.get('total_paid', 0) or 0))
-            dlg.editANCVAmount.setText(str(member.get('ancv_amount', 0) or 0))
+            dlg.editCashAmount.setText(str(member['cash_amount'] if member['cash_amount'] is not None else 0))
+            dlg.editCheck1Amount.setText(str(member['check1_amount'] if member['check1_amount'] is not None else 0))
+            dlg.editCheck2Amount.setText(str(member['check2_amount'] if member['check2_amount'] is not None else 0))
+            dlg.editCheck3Amount.setText(str(member['check3_amount'] if member['check3_amount'] is not None else 0))
+            dlg.editTotalPaid.setText(str(member['total_paid'] if member['total_paid'] is not None else 0))
+            dlg.editANCVAmount.setText(str(member['ancv_amount'] if member['ancv_amount'] is not None else 0))
             
             # Restaurer le statut de cotisation
-            status = member.get('cotisation_status', 'Non payée')
+            status = member['cotisation_status'] if member['cotisation_status'] else 'Non payée'
             index = dlg.comboCotisationStatus.findText(status)
             if index >= 0:
                 dlg.comboCotisationStatus.setCurrentIndex(index)
@@ -172,7 +180,8 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                     check3_amount=float(dlg.editCheck3Amount.text() or '0'),
                     total_paid=float(dlg.editTotalPaid.text() or '0'),
                     mjc_club_id=mjc_club_id,
-                    cotisation_status=dlg.comboCotisationStatus.currentText()
+                    cotisation_status=dlg.comboCotisationStatus.currentText(),
+                    birth_date=dlg.get_birth_date()
                 )
                 self.refresh_members()
                 QtWidgets.QMessageBox.information(self, "Succès", "Membre modifié avec succès.")
@@ -234,10 +243,12 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                 return
             
             with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
-                fieldnames = members[0].keys()
+                # Convert sqlite3.Row objects to dicts for CSV export
+                members_list = [dict(m) for m in members]
+                fieldnames = members_list[0].keys()
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 writer.writeheader()
-                writer.writerows(members)
+                writer.writerows(members_list)
             
             QtWidgets.QMessageBox.information(
                 self,
@@ -281,12 +292,15 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
     def refresh_members(self):
         """Recharge la table des membres depuis la base de données."""
         from club_manager.core.members import get_all_members
+        from club_manager.core.mjc_clubs import get_mjc_club_by_id
         
         members = get_all_members()
         self.tableMembers.setRowCount(0)
         
         for row_idx, member in enumerate(members):
             self.tableMembers.insertRow(row_idx)
+            
+            # Nom, Prénom, Adresse, CP, Ville, Tél, Mail
             self.tableMembers.setItem(row_idx, 0, QtWidgets.QTableWidgetItem(str(member['last_name'] or '')))
             self.tableMembers.setItem(row_idx, 1, QtWidgets.QTableWidgetItem(str(member['first_name'] or '')))
             self.tableMembers.setItem(row_idx, 2, QtWidgets.QTableWidgetItem(str(member['address'] or '')))
@@ -294,8 +308,41 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
             self.tableMembers.setItem(row_idx, 4, QtWidgets.QTableWidgetItem(str(member['city'] or '')))
             self.tableMembers.setItem(row_idx, 5, QtWidgets.QTableWidgetItem(str(member['phone'] or '')))
             self.tableMembers.setItem(row_idx, 6, QtWidgets.QTableWidgetItem(str(member['mail'] or '')))
-            self.tableMembers.setItem(row_idx, 7, QtWidgets.QTableWidgetItem('Oui' if member['rgpd'] else 'Non'))
-            self.tableMembers.setItem(row_idx, 8, QtWidgets.QTableWidgetItem('Oui' if member['image_rights'] else 'Non'))
-            self.tableMembers.setItem(row_idx, 9, QtWidgets.QTableWidgetItem(str(member['total_paid'] or '0')))
+            
+            # Date de naissance (formatée dd/MM/yyyy)
+            birth_date_str = ''
+            if member['birth_date']:
+                from PyQt5.QtCore import QDate
+                date = QDate.fromString(member['birth_date'], "yyyy-MM-dd")
+                if date.isValid():
+                    birth_date_str = date.toString("dd/MM/yyyy")
+            self.tableMembers.setItem(row_idx, 7, QtWidgets.QTableWidgetItem(birth_date_str))
+            
+            # RGPD, Droit image
+            self.tableMembers.setItem(row_idx, 8, QtWidgets.QTableWidgetItem('Oui' if member['rgpd'] else 'Non'))
+            self.tableMembers.setItem(row_idx, 9, QtWidgets.QTableWidgetItem('Oui' if member['image_rights'] else 'Non'))
+            
+            # Montants de paiement
+            self.tableMembers.setItem(row_idx, 10, QtWidgets.QTableWidgetItem(str(member['cash_amount'] if member['cash_amount'] is not None else '0')))
+            self.tableMembers.setItem(row_idx, 11, QtWidgets.QTableWidgetItem(str(member['check1_amount'] if member['check1_amount'] is not None else '0')))
+            self.tableMembers.setItem(row_idx, 12, QtWidgets.QTableWidgetItem(str(member['check2_amount'] if member['check2_amount'] is not None else '0')))
+            self.tableMembers.setItem(row_idx, 13, QtWidgets.QTableWidgetItem(str(member['check3_amount'] if member['check3_amount'] is not None else '0')))
+            self.tableMembers.setItem(row_idx, 14, QtWidgets.QTableWidgetItem(str(member['ancv_amount'] if member['ancv_amount'] is not None else '0')))
+            self.tableMembers.setItem(row_idx, 15, QtWidgets.QTableWidgetItem(str(member['total_paid'] if member['total_paid'] is not None else '0')))
+            
+            # Club MJC
+            mjc_club_name = ''
+            if member['mjc_club_id']:
+                try:
+                    mjc_club = get_mjc_club_by_id(member['mjc_club_id'])
+                    if mjc_club:
+                        mjc_club_name = mjc_club['name']
+                except:
+                    pass
+            self.tableMembers.setItem(row_idx, 16, QtWidgets.QTableWidgetItem(mjc_club_name))
+            
+            # Statut cotisation
+            self.tableMembers.setItem(row_idx, 17, QtWidgets.QTableWidgetItem(str(member['cotisation_status'] or 'Non payée')))
+            
             # Stocker l'ID du membre dans la première colonne avec Qt.UserRole
             self.tableMembers.item(row_idx, 0).setData(Qt.UserRole, member['id'])
