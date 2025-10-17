@@ -107,7 +107,8 @@ def test_zip_export_import():
         )
         
         # Créer une archive ZIP
-        zip_path = tempfile.mktemp(suffix='.zip')
+        fd_zip, zip_path = tempfile.mkstemp(suffix='.zip')
+        os.close(fd_zip)
         
         with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
             zipf.write(db_path, os.path.basename(db_path))
@@ -182,7 +183,8 @@ def test_pdf_export():
         assert len(members) == 3, f"Expected 3 members, got {len(members)}"
         
         # Tester l'export PDF
-        pdf_path = tempfile.mktemp(suffix='.pdf')
+        fd_pdf, pdf_path = tempfile.mkstemp(suffix='.pdf')
+        os.close(fd_pdf)
         
         # Simuler l'export (sans parent widget)
         try:
