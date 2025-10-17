@@ -9,6 +9,7 @@ Dépendances : PyQt5, Ui_ExportsTab généré par pyuic5 à partir de resources/
 
 from PyQt5 import QtWidgets, QtCore
 from club_manager.ui.exports_tab_ui import Ui_ExportsTab
+from club_manager.core.export import get_french_field_name
 import csv
 import os
 
@@ -164,8 +165,8 @@ class ExportsTab(QtWidgets.QWidget, Ui_ExportsTab):
         list_widget.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         
         for field in available_fields:
-            # Formater le nom du champ pour l'affichage
-            display_name = field.replace('_', ' ').title()
+            # Utiliser la traduction française du nom du champ
+            display_name = get_french_field_name(field)
             item = QtWidgets.QListWidgetItem(display_name)
             item.setData(QtCore.Qt.UserRole, field)
             list_widget.addItem(item)
