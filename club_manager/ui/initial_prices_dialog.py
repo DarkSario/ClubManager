@@ -4,7 +4,7 @@ Fichier : club_manager/ui/initial_prices_dialog.py
 Rôle : Dialogue de configuration initiale des tarifs lors de la création d'une nouvelle base.
 """
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from club_manager.ui.initial_prices_dialog_ui import Ui_InitialPricesDialog
 from club_manager.core.annual_prices import add_annual_price
 from datetime import datetime
