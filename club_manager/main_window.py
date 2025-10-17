@@ -258,9 +258,31 @@ class MainWindow(QMainWindow):
         dialog.exec_()
 
     def show_doc(self):
-        # On peut charger la doc HTML embarquée ici
-        html = "<h2>Documentation Club Manager</h2><p>Consultez le README ou le Wiki pour plus d'infos.</p>"
-        dialog = DocViewerDialog(self, html_content=html)
+        """Affiche la documentation HTML embarquée."""
+        import os
+        # Charger la documentation HTML embarquée
+        doc_path = os.path.join(os.path.dirname(__file__), "..", "resources", "docs", "user_manual.html")
+        doc_path = os.path.abspath(doc_path)
+        
+        html_content = ""
+        try:
+            if os.path.exists(doc_path):
+                with open(doc_path, 'r', encoding='utf-8') as f:
+                    html_content = f.read()
+            else:
+                html_content = """
+                <h2>Documentation Club Manager</h2>
+                <p>Le fichier de documentation n'a pas été trouvé.</p>
+                <p>Consultez le README.md pour plus d'informations.</p>
+                """
+        except Exception as e:
+            html_content = f"""
+            <h2>Erreur</h2>
+            <p>Impossible de charger la documentation : {str(e)}</p>
+            <p>Consultez le README.md pour plus d'informations.</p>
+            """
+        
+        dialog = DocViewerDialog(self, html_content=html_content)
         dialog.exec_()
 
     def apply_theme_on_startup(self):

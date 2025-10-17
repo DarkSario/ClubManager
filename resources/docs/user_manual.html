@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Manager - Documentation Utilisateur</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        h2 {
+            color: #2980b9;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #34495e;
+            margin-top: 20px;
+        }
+        h4 {
+            color: #7f8c8d;
+            margin-top: 15px;
+        }
+        .feature-box {
+            background-color: white;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .info-box {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .success-box {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
+        }
+        li {
+            margin: 5px 0;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .version-badge {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .new-badge {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+            background-color: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .toc {
+            background-color: white;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .toc h2 {
+            margin-top: 0;
+            border-left: none;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .toc li {
+            margin: 8px 0;
+        }
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>📚 Club Manager - Documentation Utilisateur <span class="version-badge">v2.3</span></h1>
+    
+    <div class="info-box">
+        <strong>Bienvenue dans Club Manager !</strong><br>
+        Cette documentation vous guide à travers toutes les fonctionnalités de l'application de gestion d'associations sportives et clubs.
+    </div>
+
+    <div class="toc">
+        <h2>📖 Table des matières</h2>
+        <ul>
+            <li><a href="#introduction">1. Introduction</a></li>
+            <li><a href="#multi-bases">2. Système multi-bases</a></li>
+            <li><a href="#membres">3. Gestion des membres</a></li>
+            <li><a href="#postes">4. Gestion des postes</a></li>
+            <li><a href="#clubs-mjc">5. Clubs MJC</a></li>
+            <li><a href="#sauvegarde">6. Sauvegarde et restauration</a></li>
+            <li><a href="#exports">7. Exports de données</a></li>
+            <li><a href="#mailing">8. Mailing groupé</a></li>
+            <li><a href="#audit">9. Audit et traçabilité</a></li>
+            <li><a href="#theme">10. Thèmes et personnalisation</a></li>
+            <li><a href="#tarifs">11. Tarifs annuels</a></li>
+            <li><a href="#rgpd">12. Conformité RGPD</a></li>
+            <li><a href="#nouveautes">13. Nouveautés version 2.3</a></li>
+        </ul>
+    </div>
+
+    <h2 id="introduction">1. Introduction</h2>
+    
+    <div class="feature-box">
+        <h3>Fonctionnalités principales</h3>
+        <ul>
+            <li><strong>Gestion des membres</strong> : Ajout, modification, suppression et recherche d'adhérents</li>
+            <li><strong>Système multi-bases</strong> : Une base de données par saison/année</li>
+            <li><strong>Gestion des postes</strong> : Attribution des responsabilités au sein du club</li>
+            <li><strong>Clubs MJC</strong> : Enregistrement des clubs MJC partenaires avec import en masse</li>
+            <li><strong>Exports</strong> : CSV et PDF professionnel avec sélection de champs</li>
+            <li><strong>Mailing</strong> : Envoi d'emails groupés avec champ objet</li>
+            <li><strong>Sauvegarde/Restauration</strong> : Backup complet en ZIP</li>
+            <li><strong>Audit</strong> : Traçabilité complète des modifications</li>
+            <li><strong>Conformité RGPD</strong> : Gestion des consentements et données personnelles</li>
+            <li><strong>Thèmes personnalisables</strong> : Interface adaptable</li>
+        </ul>
+    </div>
+
+    <h2 id="multi-bases">2. Système multi-bases</h2>
+    
+    <div class="info-box">
+        <strong>Concept :</strong> Depuis la version 2.0, Club Manager utilise un système où chaque base de données correspond à une saison ou une année.
+    </div>
+
+    <h3>Avantages du système multi-bases</h3>
+    <ul>
+        <li><strong>Séparation claire des données</strong> : Chaque saison a ses propres membres et activités</li>
+        <li><strong>Performance améliorée</strong> : Bases légères et rapides</li>
+        <li><strong>Archivage simplifié</strong> : Historique facile à conserver</li>
+        <li><strong>Sécurité renforcée</strong> : Pas d'altération accidentelle entre saisons</li>
+    </ul>
+
+    <h3>Au démarrage</h3>
+    <p>Au lancement, un dialogue vous propose de :</p>
+    <ol>
+        <li><strong>Ouvrir une base existante</strong> : Liste des bases détectées automatiquement</li>
+        <li><strong>Parcourir</strong> : Sélectionner une base dans un autre emplacement</li>
+        <li><strong>Créer une nouvelle base</strong> : Pour démarrer une nouvelle saison</li>
+    </ol>
+
+    <h3>Changement de base</h3>
+    <p>À tout moment, vous pouvez changer de base via :</p>
+    <p><code>Fichier → Changer de base de données...</code></p>
+
+    <h3>Stockage des bases</h3>
+    <p>Par défaut, les bases sont stockées dans :</p>
+    <ul>
+        <li><strong>Linux/Mac</strong> : <code>~/.clubmanager/</code></li>
+        <li><strong>Windows</strong> : <code>C:\Users\&lt;username&gt;\.clubmanager\</code></li>
+    </ul>
+
+    <h2 id="membres">3. Gestion des membres</h2>
+    
+    <h3>Ajouter un nouveau membre</h3>
+    <ol>
+        <li>Accédez à l'onglet <strong>Membres</strong></li>
+        <li>Cliquez sur <strong>Ajouter</strong></li>
+        <li>Remplissez le formulaire avec les informations de l'adhérent</li>
+    </ol>
+
+    <h3>Champs obligatoires</h3>
+    <ul>
+        <li>Nom et prénom</li>
+        <li>Consentement RGPD (case à cocher obligatoire)</li>
+    </ul>
+
+    <h3>Type de paiement</h3>
+    <div class="feature-box">
+        <p>Deux options disponibles :</p>
+        <ul>
+            <li><strong>Club + MJC</strong> : Paiement global pour club et MJC</li>
+            <li><strong>Club uniquement</strong> : Si la part MJC a été réglée dans un autre club MJC
+                <ul>
+                    <li>Sélectionnez le club MJC concerné dans la liste</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <h3>Autres informations</h3>
+    <ul>
+        <li><strong>Montant ANCV</strong> : Chèques-vacances si applicable</li>
+        <li><strong>Statut de cotisation</strong> : Non payée, Payée, Partiellement payée</li>
+        <li><strong>Droit à l'image</strong> : Consentement séparé pour l'utilisation d'images</li>
+    </ul>
+
+    <h3>Modifier ou supprimer un membre</h3>
+    <ul>
+        <li>Double-cliquez sur un membre pour le modifier</li>
+        <li>Sélectionnez un membre et cliquez sur <strong>Supprimer</strong> pour le retirer</li>
+        <li>Utilisez la fonction <strong>Rechercher</strong> pour filtrer les membres</li>
+    </ul>
+
+    <h2 id="postes">4. Gestion des postes</h2>
+    
+    <p>Les postes permettent de gérer les rôles et responsabilités au sein du club.</p>
+
+    <h3>Créer un poste</h3>
+    <ol>
+        <li>Accédez à l'onglet <strong>Postes</strong></li>
+        <li>Cliquez sur <strong>Ajouter</strong></li>
+        <li>Saisissez le nom du poste (ex: Président, Trésorier, Secrétaire)</li>
+        <li>Ajoutez une description si nécessaire</li>
+    </ol>
+
+    <h3>Affecter un poste</h3>
+    <p>Vous pouvez affecter des postes aux membres pour suivre l'organisation de votre structure.</p>
+
+    <h2 id="clubs-mjc">5. Clubs MJC <span class="new-badge">Nouveau v2.3</span></h2>
+    
+    <p>Enregistrez les clubs MJC partenaires pour référencer où vos membres ont réglé leur part MJC.</p>
+
+    <h3>Ajouter un club individuellement</h3>
+    <ol>
+        <li>Accédez à l'onglet <strong>Clubs MJC</strong></li>
+        <li>Saisissez le nom du club</li>
+        <li>Cliquez sur <strong>Ajouter</strong></li>
+    </ol>
+
+    <h3>Import en masse <span class="new-badge">Nouveau</span></h3>
+    <div class="success-box">
+        <strong>Importez plusieurs clubs en une seule opération !</strong>
+    </div>
+
+    <h4>Méthode 1 : Copier-Coller</h4>
+    <ol>
+        <li>Cliquez sur <strong>Importer/Coller une liste</strong></li>
+        <li>Collez votre liste de clubs (un par ligne)</li>
+        <li>Cliquez sur <strong>OK</strong></li>
+    </ol>
+
+    <h4>Méthode 2 : Depuis un fichier</h4>
+    <ol>
+        <li>Cliquez sur <strong>Importer/Coller une liste</strong></li>
+        <li>Cliquez sur <strong>Charger depuis un fichier</strong></li>
+        <li>Sélectionnez votre fichier .txt</li>
+        <li>Cliquez sur <strong>OK</strong></li>
+    </ol>
+
+    <h4>Format du fichier</h4>
+    <pre><code>MJC Centre
+MJC Nord
+MJC Sud
+MJC Est
+MJC Ouest</code></pre>
+
+    <div class="info-box">
+        <strong>Gestion automatique des doublons :</strong> Les clubs déjà existants sont automatiquement ignorés. Un rapport détaillé vous indique le nombre de clubs ajoutés et ignorés.
+    </div>
+
+    <h2 id="sauvegarde">6. Sauvegarde et restauration <span class="new-badge">Amélioré v2.3</span></h2>
+    
+    <h3>Méthodes de sauvegarde</h3>
+
+    <h4>Sauvegarde classique</h4>
+    <p><code>Fichier → Exporter une sauvegarde...</code></p>
+    <p>Crée une copie simple de la base de données.</p>
+
+    <h4>Export ZIP complet <span class="new-badge">Nouveau</span></h4>
+    <div class="success-box">
+        <strong>Archive complète avec base de données ET configuration !</strong>
+    </div>
+
+    <ol>
+        <li>Accédez à l'onglet <strong>Sauvegarde</strong></li>
+        <li>Cliquez sur <strong>Exporter (zip)</strong></li>
+        <li>Choisissez l'emplacement pour l'archive</li>
+        <li>Une barre de progression affiche l'avancement</li>
+    </ol>
+
+    <p><strong>Contenu de l'archive :</strong></p>
+    <ul>
+        <li>Fichier de base de données (.db)</li>
+        <li>Fichier de configuration (config.json)</li>
+    </ul>
+
+    <h3>Restauration</h3>
+
+    <h4>Restauration classique</h4>
+    <p><code>Fichier → Restaurer une sauvegarde...</code></p>
+    <div class="warning-box">
+        <strong>⚠️ Attention :</strong> Cette opération remplacera les données actuelles !
+    </div>
+
+    <h4>Import ZIP <span class="new-badge">Nouveau</span></h4>
+    <ol>
+        <li>Accédez à l'onglet <strong>Sauvegarde</strong></li>
+        <li>Cliquez sur <strong>Importer (zip)</strong></li>
+        <li>Sélectionnez l'archive à importer</li>
+        <li>Choisissez l'emplacement pour la base restaurée</li>
+        <li>Option : restaurer ou non la configuration</li>
+    </ol>
+
+    <h2 id="exports">7. Exports de données <span class="new-badge">Amélioré v2.3</span></h2>
+    
+    <h3>Export CSV</h3>
+    <p>Format tableur compatible Excel, LibreOffice, etc.</p>
+    <ol>
+        <li>Accédez à l'onglet <strong>Exports</strong></li>
+        <li>Cliquez sur <strong>Exporter CSV</strong></li>
+        <li>Sélectionnez le type de données (Membres, Postes, Clubs MJC, Prix annuels)</li>
+        <li>Choisissez l'emplacement du fichier</li>
+    </ol>
+
+    <h3>Export PDF professionnel <span class="new-badge">Nouveau</span></h3>
+    <div class="success-box">
+        <strong>Générez des documents PDF professionnels avec mise en page automatique !</strong>
+    </div>
+
+    <ol>
+        <li>Accédez à l'onglet <strong>Exports</strong></li>
+        <li>Cliquez sur <strong>Exporter PDF</strong></li>
+        <li>Sélectionnez le type de données à exporter</li>
+        <li>Choisissez les champs à inclure :
+            <ul>
+                <li><strong>Tous les champs</strong> : Export complet</li>
+                <li><strong>Sélection personnalisée</strong> : Cochez uniquement les champs souhaités</li>
+            </ul>
+        </li>
+        <li>Sélectionnez l'emplacement du fichier PDF</li>
+    </ol>
+
+    <h4>Caractéristiques du PDF</h4>
+    <ul>
+        <li>En-tête avec titre et date de génération</li>
+        <li>Table formatée avec couleurs alternées</li>
+        <li>Largeur de colonnes automatique</li>
+        <li>Pied de page avec total d'éléments</li>
+        <li>Format A4 professionnel</li>
+        <li>Support complet UTF-8 (accents, caractères spéciaux)</li>
+    </ul>
+
+    <h2 id="mailing">8. Mailing groupé <span class="new-badge">Amélioré v2.3</span></h2>
+    
+    <p>Envoyez des emails groupés à vos adhérents.</p>
+
+    <h3>Utilisation</h3>
+    <ol>
+        <li>Accédez à l'onglet <strong>Mailing</strong></li>
+        <li>Cliquez sur <strong>Sélection destinataires</strong> pour choisir les membres</li>
+        <li><strong>Remplissez le champ Objet</strong> <span class="new-badge">Nouveau</span> (obligatoire)</li>
+        <li>Rédigez votre message dans le champ corps</li>
+        <li>Cliquez sur <strong>Prévisualiser</strong> pour voir le rendu final</li>
+        <li>Cliquez sur <strong>Envoyer</strong> pour envoyer le mail</li>
+    </ol>
+
+    <div class="info-box">
+        <strong>Note :</strong> La fonctionnalité d'envoi effectif nécessite une configuration SMTP (à venir dans une prochaine version).
+    </div>
+
+    <h3>Champ Objet <span class="new-badge">Nouveau</span></h3>
+    <ul>
+        <li>Champ obligatoire avant envoi</li>
+        <li>Validation automatique : un message d'erreur s'affiche si le champ est vide</li>
+        <li>Affiché dans la prévisualisation</li>
+    </ul>
+
+    <h2 id="audit">9. Audit et traçabilité</h2>
+    
+    <p>Suivez toutes les modifications effectuées dans l'application pour assurer la traçabilité et la conformité.</p>
+
+    <h3>Accès à l'audit</h3>
+    <ol>
+        <li>Accédez à l'onglet <strong>Audit</strong></li>
+        <li>Consultez l'historique complet des actions</li>
+    </ol>
+
+    <h3>Informations enregistrées</h3>
+    <ul>
+        <li><strong>Date et heure</strong> de l'action</li>
+        <li><strong>Type d'action</strong> (Ajout, Modification, Suppression)</li>
+        <li><strong>Entité concernée</strong> (Membre, Poste, etc.)</li>
+        <li><strong>Détails</strong> de la modification</li>
+    </ul>
+
+    <h3>Filtres disponibles</h3>
+    <ul>
+        <li>Filtrer par date</li>
+        <li>Filtrer par type d'action</li>
+        <li>Rechercher par entité</li>
+    </ul>
+
+    <h2 id="theme">10. Thèmes et personnalisation</h2>
+    
+    <p>Personnalisez l'apparence de l'application selon vos préférences.</p>
+
+    <h3>Changer de thème</h3>
+    <ol>
+        <li>Accédez à l'onglet <strong>Thème</strong></li>
+        <li>Choisissez parmi les thèmes disponibles :
+            <ul>
+                <li>Thème clair</li>
+                <li>Thème sombre</li>
+                <li>Autres thèmes personnalisés</li>
+            </ul>
+        </li>
+        <li>Le thème s'applique immédiatement</li>
+        <li>Votre choix est sauvegardé automatiquement</li>
+    </ol>
+
+    <h2 id="tarifs">11. Tarifs annuels</h2>
+    
+    <p>Configurez les prix Club et MJC pour chaque année/saison.</p>
+
+    <h3>Modifier les tarifs</h3>
+    <ol>
+        <li>Menu : <code>Fichier → Modifier les tarifs de l'année courante...</code></li>
+        <li>Un avertissement vous rappelle les précautions à prendre</li>
+        <li>Modifiez :
+            <ul>
+                <li>Année (ex: 2024-2025)</li>
+                <li>Prix Club (€)</li>
+                <li>Prix MJC (€)</li>
+            </ul>
+        </li>
+        <li>Validez les modifications</li>
+    </ol>
+
+    <div class="warning-box">
+        <strong>⚠️ Recommandation :</strong> Pour une nouvelle saison, il est préférable de créer une nouvelle base de données plutôt que de modifier les tarifs d'une base existante.
+    </div>
+
+    <h3>Utilisation automatique</h3>
+    <p>Les tarifs configurés sont automatiquement utilisés dans :</p>
+    <ul>
+        <li>Le formulaire d'ajout de membre</li>
+        <li>Le calcul des cotisations</li>
+        <li>Les exports et rapports</li>
+    </ul>
+
+    <h2 id="rgpd">12. Conformité RGPD</h2>
+    
+    <p>Club Manager vous aide à respecter le Règlement Général sur la Protection des Données.</p>
+
+    <h3>Consentements</h3>
+    <ul>
+        <li><strong>Consentement RGPD</strong> : Obligatoire pour chaque membre</li>
+        <li><strong>Droit à l'image</strong> : Consentement séparé pour l'utilisation d'images</li>
+    </ul>
+
+    <h3>Gestion des données</h3>
+    <ul>
+        <li><strong>Export des données personnelles</strong> : Sur demande d'un membre</li>
+        <li><strong>Purge des données anciennes</strong> : Fonction disponible pour supprimer les données obsolètes</li>
+        <li><strong>Anonymisation</strong> : À venir dans une prochaine version</li>
+    </ul>
+
+    <h3>Traçabilité</h3>
+    <p>L'onglet Audit permet de suivre toutes les modifications conformément aux exigences RGPD.</p>
+
+    <h2 id="nouveautes">13. Nouveautés version 2.3</h2>
+    
+    <div class="success-box">
+        <h3>🎉 Améliorations majeures</h3>
+    </div>
+
+    <h3>1. Export/Import ZIP complet</h3>
+    <ul>
+        <li>Archive complète avec base de données et configuration</li>
+        <li>Barre de progression en temps réel</li>
+        <li>Gestion avancée des erreurs</li>
+        <li>Conservation optionnelle de la configuration</li>
+    </ul>
+
+    <h3>2. Export PDF professionnel</h3>
+    <ul>
+        <li>Mise en page automatique professionnelle</li>
+        <li>Sélection personnalisée des champs</li>
+        <li>Support de tous les types de données</li>
+        <li>Format A4 avec en-tête et pied de page</li>
+    </ul>
+
+    <h3>3. Champ Objet dans Mailing</h3>
+    <ul>
+        <li>Champ obligatoire pour tous les emails</li>
+        <li>Validation automatique</li>
+        <li>Affiché dans la prévisualisation</li>
+    </ul>
+
+    <h3>4. Import de liste de clubs MJC</h3>
+    <ul>
+        <li>Import en masse par copier-coller</li>
+        <li>Import depuis fichier texte</li>
+        <li>Détection automatique des doublons</li>
+        <li>Rapport détaillé après import</li>
+    </ul>
+
+    <h3>Historique des versions précédentes</h3>
+    
+    <h4>Version 2.2 (Novembre 2024)</h4>
+    <ul>
+        <li>Gestion annuelle des prix Club/MJC</li>
+        <li>Gestion des clubs MJC</li>
+        <li>Amélioration du formulaire membre</li>
+        <li>Suppression de l'onglet Cotisations (intégré au formulaire membre)</li>
+    </ul>
+
+    <h4>Version 2.1 (Octobre 2024)</h4>
+    <ul>
+        <li>Suppression de l'onglet Sessions (remplacé par multi-bases)</li>
+        <li>Business logic complète pour tous les onglets</li>
+        <li>Feedbacks utilisateur améliorés</li>
+    </ul>
+
+    <h4>Version 2.0 (Octobre 2024)</h4>
+    <ul>
+        <li>Nouveau système multi-bases (une base par saison)</li>
+        <li>Dialogue de sélection de base au démarrage</li>
+        <li>Menu pour changer de base à tout moment</li>
+    </ul>
+
+    <hr style="margin-top: 40px; border: none; border-top: 2px solid #3498db;">
+    
+    <div class="info-box" style="margin-top: 30px;">
+        <p><strong>© 2024 DarkSario - Club Manager v2.3</strong></p>
+        <p>Pour plus d'informations, consultez le README.md ou contactez le support.</p>
+    </div>
+</body>
+</html>
