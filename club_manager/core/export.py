@@ -10,6 +10,108 @@ from datetime import datetime
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 import pandas as pd
 
+# Dictionnaire de traduction des champs en français
+FIELD_TRANSLATIONS = {
+    # Champs membres
+    'id': 'ID',
+    'last_name': 'Nom',
+    'first_name': 'Prénom',
+    'address': 'Adresse',
+    'postal_code': 'Code postal',
+    'city': 'Ville',
+    'phone': 'Téléphone',
+    'mail': 'Email',
+    'rgpd': 'Consentement RGPD',
+    'image_rights': 'Droit à l\'image',
+    'payment_type': 'Type de paiement',
+    'ancv_amount': 'Montant ANCV',
+    'cash_amount': 'Montant espèces',
+    'check1_amount': 'Montant chèque 1',
+    'check2_amount': 'Montant chèque 2',
+    'check3_amount': 'Montant chèque 3',
+    'total_paid': 'Total payé',
+    'mjc_club_id': 'Club MJC principal',
+    'cotisation_status': 'Statut cotisation',
+    'birth_date': 'Date de naissance',
+    'other_mjc_clubs': 'Autres clubs MJC',
+    # Champs postes
+    'name': 'Nom',
+    'type': 'Type',
+    'description': 'Description',
+    'assigned_to': 'Assigné à',
+    # Champs clubs MJC
+    'created_date': 'Date de création',
+    # Champs prix annuels
+    'year': 'Année',
+    'club_price': 'Prix club',
+    'mjc_price': 'Prix MJC',
+    'is_current': 'En cours',
+    # Champs cotisations
+    'member_id': 'ID membre',
+    'session_id': 'ID session',
+    'amount': 'Montant',
+    'paid': 'Payé',
+    'payment_date': 'Date de paiement',
+    'method': 'Méthode',
+    'status': 'Statut',
+    'cheque_number': 'Numéro de chèque',
+}
+
+def get_french_field_name(field_name):
+    """
+    Retourne le nom français d'un champ, ou une version formatée si non traduit.
+    
+    Args:
+        field_name: Nom du champ en anglais
+        
+    Returns:
+        Nom du champ en français
+    """
+    return FIELD_TRANSLATIONS.get(field_name, field_name.replace('_', ' ').title())
+
+def resolve_mjc_club_names(data):
+    """
+    Résout les IDs de clubs MJC en noms de clubs dans les données.
+    
+    Args:
+        data: Liste de dictionnaires contenant les données
+        
+    Returns:
+        Liste de dictionnaires avec les IDs de clubs remplacés par les noms
+    """
+    from club_manager.core.mjc_clubs import get_all_mjc_clubs
+    
+    # Créer un dictionnaire ID -> Nom pour une recherche rapide
+    mjc_clubs = get_all_mjc_clubs()
+    club_map = {club['id']: club['name'] for club in mjc_clubs}
+    
+    # Copier les données pour ne pas modifier l'original
+    resolved_data = []
+    for item in data:
+        item_copy = dict(item)
+        
+        # Résoudre mjc_club_id
+        if 'mjc_club_id' in item_copy and item_copy['mjc_club_id']:
+            club_id = item_copy['mjc_club_id']
+            item_copy['mjc_club_id'] = club_map.get(club_id, str(club_id))
+        
+        # Résoudre other_mjc_clubs (liste d'IDs séparés par des virgules)
+        if 'other_mjc_clubs' in item_copy and item_copy['other_mjc_clubs']:
+            other_clubs_str = item_copy['other_mjc_clubs']
+            if other_clubs_str:
+                try:
+                    # Séparer les IDs, les résoudre, et les rejoindre
+                    club_ids = [int(id.strip()) for id in str(other_clubs_str).split(',')]
+                    club_names = [club_map.get(club_id, str(club_id)) for club_id in club_ids]
+                    item_copy['other_mjc_clubs'] = ', '.join(club_names)
+                except (ValueError, AttributeError):
+                    # Si on ne peut pas parser, garder la valeur originale
+                    pass
+        
+        resolved_data.append(item_copy)
+    
+    return resolved_data
+
 def export_members_csv(members, parent=None):
     fname, _ = QFileDialog.getSaveFileName(parent, "Exporter en CSV", "", "Fichiers CSV (*.csv)")
     if not fname:
@@ -82,6 +184,9 @@ def export_to_pdf(data, data_type, selected_fields=None, parent=None):
         if data and not isinstance(data[0], dict):
             data = [dict(row) for row in data]
         
+        # Résoudre les IDs de clubs MJC en noms de clubs
+        data = resolve_mjc_club_names(data)
+        
         # Déterminer les champs à afficher
         if selected_fields:
             fields = selected_fields
@@ -98,10 +203,10 @@ def export_to_pdf(data, data_type, selected_fields=None, parent=None):
             pagesize = landscape(A4)
             orientation_text = "paysage"
         
-        # Créer le document PDF
+        # Créer le document PDF avec des marges réduites pour maximiser l'espace
         doc = SimpleDocTemplate(fname, pagesize=pagesize, 
-                               leftMargin=0.5*inch, rightMargin=0.5*inch,
-                               topMargin=0.5*inch, bottomMargin=0.5*inch)
+                               leftMargin=0.3*inch, rightMargin=0.3*inch,
+                               topMargin=0.3*inch, bottomMargin=0.3*inch)
         story = []
         
         # Styles
@@ -125,8 +230,8 @@ def export_to_pdf(data, data_type, selected_fields=None, parent=None):
         story.append(date_text)
         story.append(Spacer(1, 20))
         
-        # Créer les en-têtes de table
-        headers = [field.replace('_', ' ').title() for field in fields]
+        # Créer les en-têtes de table avec traduction française
+        headers = [get_french_field_name(field) for field in fields]
         
         # Créer les données de la table avec retour à la ligne automatique
         table_data = [headers]
@@ -149,11 +254,12 @@ def export_to_pdf(data, data_type, selected_fields=None, parent=None):
             table_data.append(row)
         
         # Calculer les largeurs de colonnes de manière intelligente
-        # Largeur disponible selon l'orientation
+        # Largeur disponible selon l'orientation (A4 = 8.27 x 11.69 inches)
+        # Avec marges réduites de 0.3 inch de chaque côté
         if pagesize == A4:
-            available_width = 7 * inch  # Portrait
+            available_width = 7.67 * inch  # Portrait (8.27 - 0.6)
         else:
-            available_width = 10 * inch  # Paysage
+            available_width = 11.09 * inch  # Paysage (11.69 - 0.6)
         
         # Distribution intelligente de la largeur selon le type de colonne
         col_widths = []

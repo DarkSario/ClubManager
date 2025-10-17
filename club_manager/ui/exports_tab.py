@@ -150,6 +150,8 @@ class ExportsTab(QtWidgets.QWidget, Ui_ExportsTab):
     
     def _select_export_fields(self, available_fields):
         """Ouvre un dialogue pour sélectionner les champs à exporter."""
+        from club_manager.core.export import get_french_field_name
+        
         dialog = QtWidgets.QDialog(self)
         dialog.setWindowTitle("Sélectionner les champs à exporter")
         dialog.resize(400, 500)
@@ -164,8 +166,8 @@ class ExportsTab(QtWidgets.QWidget, Ui_ExportsTab):
         list_widget.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         
         for field in available_fields:
-            # Formater le nom du champ pour l'affichage
-            display_name = field.replace('_', ' ').title()
+            # Utiliser la traduction française du nom du champ
+            display_name = get_french_field_name(field)
             item = QtWidgets.QListWidgetItem(display_name)
             item.setData(QtCore.Qt.UserRole, field)
             list_widget.addItem(item)
