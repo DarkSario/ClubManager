@@ -135,8 +135,8 @@ def resolve_mjc_club_names(data):
                 if valid_club_ids:
                     club_names = [club_map.get(club_id, str(club_id)) for club_id in valid_club_ids]
                     item_copy['other_mjc_clubs'] = ', '.join(club_names)
-            except AttributeError:
-                # Si on ne peut pas parser (par exemple, item_copy n'est pas un dict), garder la valeur originale
+            except (AttributeError, ValueError, TypeError):
+                # Si on ne peut pas parser ou si une erreur inattendue survient, garder la valeur originale
                 pass
         
         resolved_data.append(item_copy)
