@@ -13,6 +13,7 @@ from club_manager.ui.members_tab_ui import Ui_MembersTab
 from club_manager.ui.confirmation_dialog import ConfirmationDialog
 import csv
 import os
+import json
 
 class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
     """Onglet de gestion des membres avec CRUD complet et export."""
@@ -351,7 +352,6 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
             other_clubs_str = ''
             if member['other_mjc_clubs']:
                 try:
-                    import json
                     club_ids = json.loads(member['other_mjc_clubs'])
                     club_names = []
                     for club_id in club_ids:
@@ -359,7 +359,7 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                         if club:
                             club_names.append(club['name'])
                     other_clubs_str = ', '.join(club_names)
-                except:
+                except (json.JSONDecodeError, TypeError, ValueError):
                     pass
             self.tableMembers.setItem(row_idx, 17, QtWidgets.QTableWidgetItem(other_clubs_str))
             

@@ -10,6 +10,7 @@ Dépendances : PyQt5, Ui_MemberFormDialog généré par pyuic5 à partir de reso
 from PyQt5 import QtWidgets, QtCore
 from club_manager.ui.member_form_dialog_ui import Ui_MemberFormDialog
 from club_manager.core.mjc_clubs import get_all_mjc_clubs
+import json
 
 class MemberFormDialog(QtWidgets.QDialog, Ui_MemberFormDialog):
     def __init__(self, parent=None):
@@ -143,7 +144,6 @@ class MemberFormDialog(QtWidgets.QDialog, Ui_MemberFormDialog):
     
     def get_other_mjc_clubs(self):
         """Retourne la liste des IDs des autres clubs MJC sélectionnés sous forme de chaîne JSON."""
-        import json
         selected_ids = []
         for i in range(self.listOtherMJCClubs.count()):
             item = self.listOtherMJCClubs.item(i)
@@ -155,7 +155,6 @@ class MemberFormDialog(QtWidgets.QDialog, Ui_MemberFormDialog):
     
     def set_other_mjc_clubs(self, other_clubs_json):
         """Définit les clubs MJC sélectionnés à partir d'une chaîne JSON."""
-        import json
         if not other_clubs_json:
             return
         try:
@@ -165,5 +164,5 @@ class MemberFormDialog(QtWidgets.QDialog, Ui_MemberFormDialog):
                 club_id = item.data(QtCore.Qt.UserRole)
                 if club_id in club_ids:
                     item.setSelected(True)
-        except:
+        except (json.JSONDecodeError, TypeError, ValueError):
             pass
