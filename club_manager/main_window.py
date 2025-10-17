@@ -9,7 +9,7 @@ from PyQt5.QtGui import QIcon
 from club_manager.ui.members_tab import MembersTab
 from club_manager.ui.positions_tab import PositionsTab
 from club_manager.ui.mjc_clubs_tab import MJCClubsTab
-from club_manager.ui.annual_prices_tab import AnnualPricesTab
+# annual_prices_tab import removed
 from club_manager.ui.audit_tab import AuditTab
 from club_manager.ui.exports_tab import ExportsTab
 from club_manager.ui.mailing_tab import MailingTab
@@ -56,7 +56,7 @@ class MainWindow(QMainWindow):
         self.members_tab = MembersTab()
         self.positions_tab = PositionsTab()
         self.mjc_clubs_tab = MJCClubsTab()
-        self.annual_prices_tab = AnnualPricesTab()
+        # annual_prices_tab removed as per requirements
         self.audit_tab = AuditTab()
         self.exports_tab = ExportsTab()
         self.mailing_tab = MailingTab()
@@ -66,7 +66,7 @@ class MainWindow(QMainWindow):
         self.tabs.addTab(self.members_tab, "Membres")
         self.tabs.addTab(self.positions_tab, "Postes")
         self.tabs.addTab(self.mjc_clubs_tab, "Clubs MJC")
-        self.tabs.addTab(self.annual_prices_tab, "Prix annuels")
+        # Prix annuels tab removed
         self.tabs.addTab(self.exports_tab, "Exports")
         self.tabs.addTab(self.mailing_tab, "Mailing")
         self.tabs.addTab(self.audit_tab, "Audit")
@@ -81,6 +81,12 @@ class MainWindow(QMainWindow):
         action_change_db = QAction("Changer de base de données...", self)
         action_change_db.triggered.connect(self.change_database)
         file_menu.addAction(action_change_db)
+        
+        file_menu.addSeparator()
+        
+        action_modify_prices = QAction("Modifier les tarifs de l'année courante...", self)
+        action_modify_prices.triggered.connect(self.modify_current_prices)
+        file_menu.addAction(action_modify_prices)
         
         file_menu.addSeparator()
 
@@ -143,11 +149,105 @@ class MainWindow(QMainWindow):
             self.mjc_clubs_tab.refresh_clubs()
         except:
             pass
-        try:
-            self.annual_prices_tab.refresh_prices()
-        except:
-            pass
+        # annual_prices_tab removed
         # Ajouter d'autres rafraîchissements si nécessaire
+    
+    def modify_current_prices(self):
+        """Permet de modifier les tarifs de l'année courante avec un avertissement."""
+        from club_manager.core.annual_prices import get_current_annual_price, update_annual_price
+        from PyQt5.QtWidgets import QDialog, QFormLayout, QLineEdit, QDialogButtonBox, QLabel
+        
+        # Récupérer les tarifs actuels
+        current_price = get_current_annual_price()
+        if not current_price:
+            QMessageBox.warning(
+                self,
+                "Aucun tarif",
+                "Aucun tarif n'est configuré pour cette base de données.\n"
+                "Veuillez d'abord créer une configuration de tarifs."
+            )
+            return
+        
+        # Afficher un avertissement
+        reply = QMessageBox.warning(
+            self,
+            "Modifier les tarifs",
+            "⚠️ ATTENTION ⚠️\n\n"
+            "Vous êtes sur le point de modifier les tarifs de l'année courante.\n"
+            "Cette action peut affecter les cotisations des membres existants.\n\n"
+            "Il est recommandé de :\n"
+            "- Créer une nouvelle base pour une nouvelle saison\n"
+            "- Ou de vérifier que cette modification est bien nécessaire\n\n"
+            "Voulez-vous continuer ?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+        
+        if reply != QMessageBox.Yes:
+            return
+        
+        # Créer le dialogue de modification
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Modifier les tarifs de l'année courante")
+        dialog.setModal(True)
+        
+        layout = QFormLayout()
+        
+        # Informations
+        info_label = QLabel(f"Modification des tarifs pour l'année : {current_price['year']}")
+        info_label.setStyleSheet("font-weight: bold; margin-bottom: 10px;")
+        layout.addRow(info_label)
+        
+        # Champs de saisie
+        edit_year = QLineEdit(current_price['year'])
+        layout.addRow("Année :", edit_year)
+        
+        edit_club_price = QLineEdit(str(current_price['club_price']))
+        layout.addRow("Prix Club (€) :", edit_club_price)
+        
+        edit_mjc_price = QLineEdit(str(current_price['mjc_price']))
+        layout.addRow("Prix MJC (€) :", edit_mjc_price)
+        
+        # Boutons
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        layout.addRow(buttons)
+        
+        dialog.setLayout(layout)
+        
+        if dialog.exec_() == QDialog.Accepted:
+            try:
+                year = edit_year.text().strip()
+                club_price = float(edit_club_price.text().strip())
+                mjc_price = float(edit_mjc_price.text().strip())
+                
+                if not year:
+                    QMessageBox.warning(self, "Champ requis", "L'année est obligatoire.")
+                    return
+                
+                if club_price < 0 or mjc_price < 0:
+                    QMessageBox.warning(self, "Montant invalide", "Les prix ne peuvent pas être négatifs.")
+                    return
+                
+                # Mettre à jour les tarifs
+                update_annual_price(
+                    current_price['id'],
+                    year,
+                    club_price,
+                    mjc_price,
+                    True  # Garder comme tarif courant
+                )
+                
+                QMessageBox.information(
+                    self,
+                    "Succès",
+                    "Les tarifs ont été modifiés avec succès."
+                )
+            except ValueError:
+                QMessageBox.critical(self, "Erreur", "Les prix doivent être des nombres valides.")
+            except Exception as e:
+                QMessageBox.critical(self, "Erreur", f"Erreur lors de la modification : {str(e)}")
 
     def show_about(self):
         dialog = AboutDialog(self)

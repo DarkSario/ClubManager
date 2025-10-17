@@ -15,6 +15,7 @@ class DatabaseSelectorDialog(QtWidgets.QDialog, Ui_DatabaseSelectorDialog):
         super().__init__(parent)
         self.setupUi(self)
         self.selected_db_path = None
+        self.is_new_database = False  # Flag pour savoir si c'est une nouvelle base
         
         # Connexions
         self.buttonOpenSelected.clicked.connect(self.open_selected)
@@ -28,6 +29,10 @@ class DatabaseSelectorDialog(QtWidgets.QDialog, Ui_DatabaseSelectorDialog):
         
         # Charger la dernière base utilisée
         self.load_last_database()
+    
+    def is_new_database_created(self):
+        """Retourne True si une nouvelle base vient d'être créée."""
+        return self.is_new_database
     
     def get_app_data_dir(self):
         """Retourne le répertoire de données de l'application."""
@@ -165,6 +170,7 @@ class DatabaseSelectorDialog(QtWidgets.QDialog, Ui_DatabaseSelectorDialog):
         
         # Créer un fichier vide (sera initialisé par Database)
         self.selected_db_path = db_path
+        self.is_new_database = True  # Marquer comme nouvelle base
         self.save_last_database(self.selected_db_path)
         self.accept()
     
