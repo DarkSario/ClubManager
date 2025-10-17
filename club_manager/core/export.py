@@ -77,6 +77,9 @@ def export_to_pdf(data, data_type, selected_fields=None, parent=None):
         return False
     
     try:
+        # Convert sqlite3.Row objects to dictionaries for proper field access
+        data = [dict(row) for row in data]
+        
         # Déterminer les champs à afficher
         if selected_fields:
             fields = selected_fields
