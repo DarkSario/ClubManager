@@ -80,7 +80,7 @@ Si vous souhaitez reprendre certains membres de la saison précédente :
 - Python 3.8 ou supérieur
 - PyQt5
 - pandas
-- reportlab (pour l'export PDF)
+- reportlab (pour les exports PDF)
 - SQLite3 (généralement inclus avec Python)
 
 ### Installation des dépendances
@@ -229,9 +229,9 @@ Pour créer un export PDF professionnel :
    - Table formatée avec vos données
    - Total d'éléments exportés
 
-## Mailing groupé
+## Mailing groupé (Nouveau v2.3)
 
-### Utilisation (Nouveau v2.3 : champ Objet)
+### Utilisation avec champ Objet
 
 1. Accédez à l'onglet **"Mailing"**
 2. Cliquez sur **"Sélection destinataires"** pour choisir les membres
@@ -269,7 +269,7 @@ Tous droits réservés.
 - ✨ **Export PDF professionnel** : Export des données au format PDF avec sélection de champs
 - ✨ **Champ Objet dans Mailing** : Ajout d'un champ sujet éditable pour les mails groupés
 - ✨ **Import de liste de clubs MJC** : Import en masse par copier-coller ou fichier texte
-- 📦 Nouvelle dépendance : reportlab pour la génération PDF
+- 📦 Nouvelle dépendance : reportlab pour la génération de fichiers PDF
 - 📝 Documentation complète dans IMPLEMENTATION_V2.3.md
 - ✅ Tests complets pour toutes les nouvelles fonctionnalités
 
