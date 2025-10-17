@@ -9,6 +9,7 @@ import os
 from datetime import datetime
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 import pandas as pd
+from club_manager.core.mjc_clubs import get_all_mjc_clubs
 
 # Dictionnaire de traduction des champs en français
 FIELD_TRANSLATIONS = {
@@ -79,8 +80,6 @@ def resolve_mjc_club_names(data):
     Returns:
         Liste de dictionnaires avec les IDs de clubs remplacés par les noms
     """
-    from club_manager.core.mjc_clubs import get_all_mjc_clubs
-    
     # Créer un dictionnaire ID -> Nom pour une recherche rapide
     mjc_clubs = get_all_mjc_clubs()
     club_map = {club['id']: club['name'] for club in mjc_clubs}
@@ -97,16 +96,14 @@ def resolve_mjc_club_names(data):
         
         # Résoudre other_mjc_clubs (liste d'IDs séparés par des virgules)
         if 'other_mjc_clubs' in item_copy and item_copy['other_mjc_clubs']:
-            other_clubs_str = item_copy['other_mjc_clubs']
-            if other_clubs_str:
-                try:
-                    # Séparer les IDs, les résoudre, et les rejoindre
-                    club_ids = [int(id.strip()) for id in str(other_clubs_str).split(',')]
-                    club_names = [club_map.get(club_id, str(club_id)) for club_id in club_ids]
-                    item_copy['other_mjc_clubs'] = ', '.join(club_names)
-                except (ValueError, AttributeError):
-                    # Si on ne peut pas parser, garder la valeur originale
-                    pass
+            try:
+                # Séparer les IDs, les résoudre, et les rejoindre
+                club_ids = [int(id.strip()) for id in str(item_copy['other_mjc_clubs']).split(',')]
+                club_names = [club_map.get(club_id, str(club_id)) for club_id in club_ids]
+                item_copy['other_mjc_clubs'] = ', '.join(club_names)
+            except (ValueError, AttributeError):
+                # Si on ne peut pas parser, garder la valeur originale
+                pass
         
         resolved_data.append(item_copy)
     

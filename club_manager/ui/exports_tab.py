@@ -9,6 +9,7 @@ Dépendances : PyQt5, Ui_ExportsTab généré par pyuic5 à partir de resources/
 
 from PyQt5 import QtWidgets, QtCore
 from club_manager.ui.exports_tab_ui import Ui_ExportsTab
+from club_manager.core.export import get_french_field_name
 import csv
 import os
 
@@ -150,8 +151,6 @@ class ExportsTab(QtWidgets.QWidget, Ui_ExportsTab):
     
     def _select_export_fields(self, available_fields):
         """Ouvre un dialogue pour sélectionner les champs à exporter."""
-        from club_manager.core.export import get_french_field_name
-        
         dialog = QtWidgets.QDialog(self)
         dialog.setWindowTitle("Sélectionner les champs à exporter")
         dialog.resize(400, 500)
