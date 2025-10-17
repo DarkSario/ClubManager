@@ -21,19 +21,24 @@
      <item row="6" column="1"><widget class="QLineEdit" name="editMail"/></item>
      <item row="7" column="0" colspan="2"><widget class="QCheckBox" name="checkRGPD"><property name="text"><string>Consentement RGPD (obligatoire)</string></property></widget></item>
      <item row="8" column="0" colspan="2"><widget class="QCheckBox" name="checkImageRights"><property name="text"><string>Droit à l'image accepté</string></property></widget></item>
-     <item row="9" column="0"><widget class="QLabel" name="labelHealth"><property name="text"><string>Fiche santé :</string></property></widget></item>
-     <item row="9" column="1"><widget class="QLineEdit" name="editHealth"/></item>
-     <item row="10" column="0"><widget class="QLabel" name="labelPaymentType"><property name="text"><string>Type de paiement :</string></property></widget></item>
-     <item row="10" column="1"><widget class="QComboBox" name="comboPaymentType"><item><property name="text"><string>Club + MJC</string></property></item><item><property name="text"><string>Club uniquement (MJC réglée ailleurs)</string></property></item></widget></item>
-     <item row="11" column="0"><widget class="QLabel" name="labelMJCClub"><property name="text"><string>Club MJC où réglé :</string></property></widget></item>
-     <item row="11" column="1"><widget class="QComboBox" name="comboMJCClub"><property name="enabled"><bool>false</bool></property></widget></item>
-     <item row="12" column="0"><widget class="QLabel" name="labelANCVAmount"><property name="text"><string>Montant ANCV :</string></property></widget></item>
-     <item row="12" column="1"><widget class="QLineEdit" name="editANCVAmount"><property name="placeholderText"><string>0.00</string></property></widget></item>
-     <item row="13" column="0"><widget class="QLabel" name="labelCotisationStatus"><property name="text"><string>Statut cotisation :</string></property></widget></item>
-     <item row="13" column="1"><widget class="QComboBox" name="comboCotisationStatus"><item><property name="text"><string>Non payée</string></property></item><item><property name="text"><string>Payée</string></property></item><item><property name="text"><string>Partiellement payée</string></property></item></widget></item>
-     <item row="14" column="0" colspan="2"><widget class="QCheckBox" name="checkMultiClub"><property name="text"><string>Déjà membre d'un autre club</string></property></widget></item>
-     <item row="15" column="0"><widget class="QLabel" name="labelExternalClub"><property name="text"><string>Club externe :</string></property></widget></item>
-     <item row="15" column="1"><widget class="QLineEdit" name="editExternalClub"><property name="enabled"><bool>false</bool></property><property name="placeholderText"><string>Nom du club externe</string></property></widget></item>
+     <item row="9" column="0"><widget class="QLabel" name="labelPaymentType"><property name="text"><string>Type de paiement :</string></property></widget></item>
+     <item row="9" column="1"><widget class="QComboBox" name="comboPaymentType"><item><property name="text"><string>Club + MJC</string></property></item><item><property name="text"><string>Club uniquement (MJC réglée ailleurs)</string></property></item></widget></item>
+     <item row="10" column="0"><widget class="QLabel" name="labelMJCClub"><property name="text"><string>Club MJC où réglé :</string></property></widget></item>
+     <item row="10" column="1"><widget class="QComboBox" name="comboMJCClub"><property name="enabled"><bool>false</bool></property></widget></item>
+     <item row="11" column="0"><widget class="QLabel" name="labelCashAmount"><property name="text"><string>Espèce :</string></property></widget></item>
+     <item row="11" column="1"><widget class="QLineEdit" name="editCashAmount"><property name="placeholderText"><string>0.00</string></property></widget></item>
+     <item row="12" column="0"><widget class="QLabel" name="labelCheck1Amount"><property name="text"><string>Chèque 1 :</string></property></widget></item>
+     <item row="12" column="1"><widget class="QLineEdit" name="editCheck1Amount"><property name="placeholderText"><string>0.00</string></property></widget></item>
+     <item row="13" column="0"><widget class="QLabel" name="labelCheck2Amount"><property name="text"><string>Chèque 2 :</string></property></widget></item>
+     <item row="13" column="1"><widget class="QLineEdit" name="editCheck2Amount"><property name="placeholderText"><string>0.00</string></property></widget></item>
+     <item row="14" column="0"><widget class="QLabel" name="labelCheck3Amount"><property name="text"><string>Chèque 3 :</string></property></widget></item>
+     <item row="14" column="1"><widget class="QLineEdit" name="editCheck3Amount"><property name="placeholderText"><string>0.00</string></property></widget></item>
+     <item row="15" column="0"><widget class="QLabel" name="labelTotalPaid"><property name="text"><string>Total payé :</string></property></widget></item>
+     <item row="15" column="1"><widget class="QLineEdit" name="editTotalPaid"><property name="placeholderText"><string>0.00</string></property><property name="readOnly"><bool>true</bool></property></widget></item>
+     <item row="16" column="0"><widget class="QLabel" name="labelANCVAmount"><property name="text"><string>Montant ANCV :</string></property></widget></item>
+     <item row="16" column="1"><widget class="QLineEdit" name="editANCVAmount"><property name="placeholderText"><string>0.00</string></property></widget></item>
+     <item row="17" column="0"><widget class="QLabel" name="labelCotisationStatus"><property name="text"><string>Statut cotisation :</string></property></widget></item>
+     <item row="17" column="1"><widget class="QComboBox" name="comboCotisationStatus"><item><property name="text"><string>Non payée</string></property></item><item><property name="text"><string>Payée</string></property></item><item><property name="text"><string>Partiellement payée</string></property></item></widget></item>
     </layout>
    </item>
    <item>

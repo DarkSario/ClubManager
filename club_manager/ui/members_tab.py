@@ -45,23 +45,6 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
         
         dlg = MemberFormDialog(self)
         if dlg.exec_() == QtWidgets.QDialog.Accepted:
-            # Validation des champs obligatoires
-            if not dlg.editLastName.text() or not dlg.editFirstName.text():
-                QtWidgets.QMessageBox.warning(
-                    self, 
-                    "Champs obligatoires", 
-                    "Le nom et le prénom sont obligatoires."
-                )
-                return
-            
-            if not dlg.checkRGPD.isChecked():
-                QtWidgets.QMessageBox.warning(
-                    self,
-                    "RGPD requis",
-                    "Le consentement RGPD est obligatoire pour enregistrer un membre."
-                )
-                return
-            
             try:
                 # Récupérer le type de paiement
                 payment_type = "club_mjc" if dlg.comboPaymentType.currentIndex() == 0 else "club_only"
@@ -81,12 +64,15 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                     mail=dlg.editMail.text(),
                     rgpd=int(dlg.checkRGPD.isChecked()),
                     image_rights=int(dlg.checkImageRights.isChecked()),
-                    health=dlg.editHealth.text(),
                     payment_type=payment_type,
                     ancv_amount=float(dlg.editANCVAmount.text() or '0'),
+                    cash_amount=float(dlg.editCashAmount.text() or '0'),
+                    check1_amount=float(dlg.editCheck1Amount.text() or '0'),
+                    check2_amount=float(dlg.editCheck2Amount.text() or '0'),
+                    check3_amount=float(dlg.editCheck3Amount.text() or '0'),
+                    total_paid=float(dlg.editTotalPaid.text() or '0'),
                     mjc_club_id=mjc_club_id,
-                    cotisation_status=dlg.comboCotisationStatus.currentText(),
-                    external_club=dlg.editExternalClub.text() if dlg.checkMultiClub.isChecked() else None
+                    cotisation_status=dlg.comboCotisationStatus.currentText()
                 )
                 self.refresh_members()
                 QtWidgets.QMessageBox.information(self, "Succès", "Membre ajouté avec succès.")
@@ -129,7 +115,6 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
             dlg.editMail.setText(member.get('mail', ''))
             dlg.checkRGPD.setChecked(bool(member.get('rgpd', 0)))
             dlg.checkImageRights.setChecked(bool(member.get('image_rights', 0)))
-            dlg.editHealth.setText(member.get('health', ''))
             
             # Restaurer le type de paiement
             payment_type = member.get('payment_type', 'club_mjc')
@@ -145,7 +130,13 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
             else:
                 dlg.comboPaymentType.setCurrentIndex(0)
             
-            dlg.editANCVAmount.setText(str(member.get('ancv_amount', 0)))
+            # Restaurer les montants de paiement
+            dlg.editCashAmount.setText(str(member.get('cash_amount', 0) or 0))
+            dlg.editCheck1Amount.setText(str(member.get('check1_amount', 0) or 0))
+            dlg.editCheck2Amount.setText(str(member.get('check2_amount', 0) or 0))
+            dlg.editCheck3Amount.setText(str(member.get('check3_amount', 0) or 0))
+            dlg.editTotalPaid.setText(str(member.get('total_paid', 0) or 0))
+            dlg.editANCVAmount.setText(str(member.get('ancv_amount', 0) or 0))
             
             # Restaurer le statut de cotisation
             status = member.get('cotisation_status', 'Non payée')
@@ -153,16 +144,7 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
             if index >= 0:
                 dlg.comboCotisationStatus.setCurrentIndex(index)
             
-            if member.get('external_club'):
-                dlg.checkMultiClub.setChecked(True)
-                dlg.editExternalClub.setText(member.get('external_club', ''))
-            
             if dlg.exec_() == QtWidgets.QDialog.Accepted:
-                # Validation
-                if not dlg.editLastName.text() or not dlg.editFirstName.text():
-                    QtWidgets.QMessageBox.warning(self, "Champs obligatoires", "Le nom et le prénom sont obligatoires.")
-                    return
-                
                 # Récupérer le type de paiement
                 payment_type = "club_mjc" if dlg.comboPaymentType.currentIndex() == 0 else "club_only"
                 
@@ -182,12 +164,15 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                     mail=dlg.editMail.text(),
                     rgpd=int(dlg.checkRGPD.isChecked()),
                     image_rights=int(dlg.checkImageRights.isChecked()),
-                    health=dlg.editHealth.text(),
                     payment_type=payment_type,
                     ancv_amount=float(dlg.editANCVAmount.text() or '0'),
+                    cash_amount=float(dlg.editCashAmount.text() or '0'),
+                    check1_amount=float(dlg.editCheck1Amount.text() or '0'),
+                    check2_amount=float(dlg.editCheck2Amount.text() or '0'),
+                    check3_amount=float(dlg.editCheck3Amount.text() or '0'),
+                    total_paid=float(dlg.editTotalPaid.text() or '0'),
                     mjc_club_id=mjc_club_id,
-                    cotisation_status=dlg.comboCotisationStatus.currentText(),
-                    external_club=dlg.editExternalClub.text() if dlg.checkMultiClub.isChecked() else None
+                    cotisation_status=dlg.comboCotisationStatus.currentText()
                 )
                 self.refresh_members()
                 QtWidgets.QMessageBox.information(self, "Succès", "Membre modifié avec succès.")
