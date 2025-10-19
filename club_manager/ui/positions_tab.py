@@ -152,16 +152,8 @@ class PositionsTab(QtWidgets.QWidget, Ui_PositionsTab):
     def export_positions(self):
         """Exporte la liste des postes en CSV."""
         from club_manager.core.positions import get_all_positions
-        
-        file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
-            self,
-            "Exporter les postes",
-            os.path.expanduser("~/postes_export.csv"),
-            "Fichiers CSV (*.csv)"
-        )
-        
-        if not file_path:
-            return
+        from club_manager.ui.csv_export_dialog import CSVExportDialog
+        from club_manager.core.exports import export_to_csv
         
         try:
             positions = get_all_positions()
@@ -169,19 +161,50 @@ class PositionsTab(QtWidgets.QWidget, Ui_PositionsTab):
                 QtWidgets.QMessageBox.information(self, "Export", "Aucun poste à exporter.")
                 return
             
-            with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
-                fieldnames = positions[0].keys()
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                writer.writeheader()
-                writer.writerows(positions)
+            # Demander les options d'export CSV
+            csv_dialog = CSVExportDialog(self)
+            if csv_dialog.exec_() != QtWidgets.QDialog.Accepted:
+                return
+            
+            options = csv_dialog.get_options()
+            
+            # Demander le chemin de sauvegarde
+            file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
+                self,
+                "Exporter les postes",
+                os.path.expanduser("~/postes_export.csv"),
+                "Fichiers CSV (*.csv)"
+            )
+            
+            if not file_path:
+                return
+            
+            # Utiliser la fonction d'export centralisée avec les options choisies
+            num_rows = export_to_csv(
+                positions,
+                file_path,
+                delimiter=options['delimiter'],
+                add_bom=options['add_bom'],
+                translate_headers=True
+            )
+            
+            separator_name = {';': 'point-virgule', ',': 'virgule', '\t': 'tabulation'}
             
             QtWidgets.QMessageBox.information(
                 self,
                 "Export réussi",
-                f"{len(positions)} poste(s) exporté(s) vers :\n{file_path}"
+                f"{num_rows} poste(s) exporté(s) vers :\n{file_path}\n\n"
+                f"Séparateur : {separator_name.get(options['delimiter'], options['delimiter'])}\n"
+                f"BOM UTF-8 : {'Oui' if options['add_bom'] else 'Non'}"
             )
         except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "Erreur d'export", f"Erreur lors de l'export : {str(e)}")
+            import traceback
+            error_details = traceback.format_exc()
+            QtWidgets.QMessageBox.critical(
+                self, 
+                "Erreur d'export", 
+                f"Erreur lors de l'export : {str(e)}\n\nDétails:\n{error_details}"
+            )
 
     def affect_position(self):
         """Affecte le poste sélectionné à un membre."""

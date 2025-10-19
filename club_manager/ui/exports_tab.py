@@ -26,6 +26,8 @@ class ExportsTab(QtWidgets.QWidget, Ui_ExportsTab):
     def export_csv(self):
         """Exporte les données sélectionnées en CSV."""
         from club_manager.core.members import get_all_members
+        from club_manager.ui.csv_export_dialog import CSVExportDialog
+        from club_manager.core.exports import export_to_csv
         
         # Demander quel type de données exporter
         choice, ok = QtWidgets.QInputDialog.getItem(
@@ -65,6 +67,13 @@ class ExportsTab(QtWidgets.QWidget, Ui_ExportsTab):
                 QtWidgets.QMessageBox.information(self, "Export", f"Aucune donnée à exporter pour {choice}.")
                 return
             
+            # Demander les options d'export CSV
+            csv_dialog = CSVExportDialog(self)
+            if csv_dialog.exec_() != QtWidgets.QDialog.Accepted:
+                return
+            
+            options = csv_dialog.get_options()
+            
             # Demander le chemin de sauvegarde
             file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
                 self,
@@ -74,21 +83,32 @@ class ExportsTab(QtWidgets.QWidget, Ui_ExportsTab):
             )
             
             if file_path:
-                with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
-                    # Convert sqlite3.Row objects to dicts for CSV export
-                    data_list = [dict(row) for row in data]
-                    fieldnames = data_list[0].keys()
-                    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                    writer.writeheader()
-                    writer.writerows(data_list)
+                # Utiliser la fonction d'export centralisée avec les options choisies
+                num_rows = export_to_csv(
+                    data,
+                    file_path,
+                    delimiter=options['delimiter'],
+                    add_bom=options['add_bom'],
+                    translate_headers=True
+                )
+                
+                separator_name = {';': 'point-virgule', ',': 'virgule', '\t': 'tabulation'}
                 
                 QtWidgets.QMessageBox.information(
                     self,
                     "Export réussi",
-                    f"{len(data)} ligne(s) exportée(s) vers :\n{file_path}"
+                    f"{num_rows} ligne(s) exportée(s) vers :\n{file_path}\n\n"
+                    f"Séparateur : {separator_name.get(options['delimiter'], options['delimiter'])}\n"
+                    f"BOM UTF-8 : {'Oui' if options['add_bom'] else 'Non'}"
                 )
         except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "Erreur d'export", f"Erreur lors de l'export : {str(e)}")
+            import traceback
+            error_details = traceback.format_exc()
+            QtWidgets.QMessageBox.critical(
+                self, 
+                "Erreur d'export", 
+                f"Erreur lors de l'export : {str(e)}\n\nDétails:\n{error_details}"
+            )
 
     def export_pdf(self):
         """Exporte les données en PDF avec possibilité de sélectionner les champs."""
