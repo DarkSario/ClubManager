@@ -17,14 +17,31 @@ def is_phone_valid(phone):
 def format_currency(amount):
     try:
         return "{:.2f} €".format(float(amount))
-    except Exception:
-        return str(amount)
+    except (ValueError, TypeError):
+        return "0.00 €"
 
 def safe_str(obj):
     try:
         return str(obj)
     except Exception:
         return ""
+
+def safe_get_amount(member, key):
+    """
+    Récupère de manière sécurisée un montant depuis un membre.
+    
+    Args:
+        member: Objet membre (dict-like)
+        key: Clé du champ à récupérer
+        
+    Returns:
+        float: Montant converti en float, 0.0 si null ou erreur
+    """
+    try:
+        value = member.get(key) if hasattr(member, 'get') else member[key]
+        return float(value) if value is not None else 0.0
+    except (KeyError, ValueError, TypeError):
+        return 0.0
 
 def calculate_payment_totals(members):
     """
@@ -53,30 +70,17 @@ def calculate_payment_totals(members):
     
     for member in members:
         try:
-            # Récupérer et convertir les montants espèces
-            cash_amount = member.get('cash_amount') if hasattr(member, 'get') else member['cash_amount']
-            cash = float(cash_amount) if cash_amount is not None else 0.0
-            totals['cash'] += cash
+            # Récupérer et additionner les montants
+            totals['cash'] += safe_get_amount(member, 'cash_amount')
             
-            # Récupérer et convertir les montants chèques
-            check1 = member.get('check1_amount') if hasattr(member, 'get') else member['check1_amount']
-            check1 = float(check1) if check1 is not None else 0.0
+            check1 = safe_get_amount(member, 'check1_amount')
+            check2 = safe_get_amount(member, 'check2_amount')
+            check3 = safe_get_amount(member, 'check3_amount')
+            totals['checks'] += check1 + check2 + check3
             
-            check2 = member.get('check2_amount') if hasattr(member, 'get') else member['check2_amount']
-            check2 = float(check2) if check2 is not None else 0.0
+            totals['ancv'] += safe_get_amount(member, 'ancv_amount')
             
-            check3 = member.get('check3_amount') if hasattr(member, 'get') else member['check3_amount']
-            check3 = float(check3) if check3 is not None else 0.0
-            
-            checks_total = check1 + check2 + check3
-            totals['checks'] += checks_total
-            
-            # Récupérer et convertir les montants ANCV
-            ancv_amount = member.get('ancv_amount') if hasattr(member, 'get') else member['ancv_amount']
-            ancv = float(ancv_amount) if ancv_amount is not None else 0.0
-            totals['ancv'] += ancv
-            
-        except (KeyError, ValueError, TypeError) as e:
+        except Exception as e:
             # Log l'erreur et continuer avec le membre suivant
             logger.warning(f"Erreur lors du calcul des totaux pour un membre : {e}")
             continue
