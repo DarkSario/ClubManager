@@ -231,17 +231,8 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
     def export_members(self):
         """Exporte la liste des membres en CSV."""
         from club_manager.core.members import get_all_members
-        
-        # Demander le chemin de sauvegarde
-        file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
-            self,
-            "Exporter les membres",
-            os.path.expanduser("~/membres_export.csv"),
-            "Fichiers CSV (*.csv)"
-        )
-        
-        if not file_path:
-            return
+        from club_manager.ui.csv_export_dialog import CSVExportDialog
+        from club_manager.core.exports import export_to_csv
         
         try:
             members = get_all_members()
@@ -249,21 +240,50 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                 QtWidgets.QMessageBox.information(self, "Export", "Aucun membre à exporter.")
                 return
             
-            with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
-                # Convert sqlite3.Row objects to dicts for CSV export
-                members_list = [dict(m) for m in members]
-                fieldnames = members_list[0].keys()
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                writer.writeheader()
-                writer.writerows(members_list)
+            # Demander les options d'export CSV
+            csv_dialog = CSVExportDialog(self)
+            if csv_dialog.exec_() != QtWidgets.QDialog.Accepted:
+                return
+            
+            options = csv_dialog.get_options()
+            
+            # Demander le chemin de sauvegarde
+            file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
+                self,
+                "Exporter les membres",
+                os.path.expanduser("~/membres_export.csv"),
+                "Fichiers CSV (*.csv)"
+            )
+            
+            if not file_path:
+                return
+            
+            # Utiliser la fonction d'export centralisée avec les options choisies
+            num_rows = export_to_csv(
+                members,
+                file_path,
+                delimiter=options['delimiter'],
+                add_bom=options['add_bom'],
+                translate_headers=True
+            )
+            
+            separator_name = {';': 'point-virgule', ',': 'virgule', '\t': 'tabulation'}
             
             QtWidgets.QMessageBox.information(
                 self,
                 "Export réussi",
-                f"{len(members)} membre(s) exporté(s) vers :\n{file_path}"
+                f"{num_rows} membre(s) exporté(s) vers :\n{file_path}\n\n"
+                f"Séparateur : {separator_name.get(options['delimiter'], options['delimiter'])}\n"
+                f"BOM UTF-8 : {'Oui' if options['add_bom'] else 'Non'}"
             )
         except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "Erreur d'export", f"Erreur lors de l'export : {str(e)}")
+            import traceback
+            error_details = traceback.format_exc()
+            QtWidgets.QMessageBox.critical(
+                self, 
+                "Erreur d'export", 
+                f"Erreur lors de l'export : {str(e)}\n\nDétails:\n{error_details}"
+            )
 
     def filter_members(self):
         """Filtre les membres selon les critères saisis."""
