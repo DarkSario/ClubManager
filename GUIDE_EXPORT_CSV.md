@@ -20,7 +20,7 @@ Lors de chaque export CSV, vous pouvez maintenant choisir le séparateur :
   - Recommandé pour Excel anglais ou applications internationales
   - Utilisé par défaut dans les pays anglo-saxons
   
-- **Tabulation (\t)** - Pour import avancé
+- **Tabulation** - Pour import avancé
   - Utile pour importer dans des outils techniques
   - Garantit la compatibilité avec la plupart des outils
 
@@ -29,7 +29,7 @@ Lors de chaque export CSV, vous pouvez maintenant choisir le séparateur :
 Le système gère maintenant automatiquement :
 
 - **Virgules dans les données** : Les champs contenant des virgules sont automatiquement protégés par des guillemets
-- **Guillemets dans les données** : Les guillemets sont doublés selon la norme CSV (`"` devient `""`)
+- **Guillemets dans les données** : Les guillemets sont doublés selon la norme CSV (un guillemet `"` devient deux guillemets `""`)
 - **Retours à la ligne** : Les champs contenant des retours à la ligne sont préservés
 - **Caractères accentués** : Support complet de l'UTF-8 (é, è, ê, ô, ü, etc.)
 
