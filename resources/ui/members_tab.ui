@@ -13,6 +13,40 @@
     </layout>
    </item>
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutSummary">
+     <item>
+      <widget class="QLabel" name="labelTotalAmount">
+       <property name="text"><string>Total général : 0.00 €</string></property>
+       <property name="styleSheet"><string>QLabel { font-weight: bold; color: #2E7D32; padding: 5px; }</string></property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelCashAmount">
+       <property name="text"><string>Espèces : 0.00 €</string></property>
+       <property name="styleSheet"><string>QLabel { padding: 5px; color: #1976D2; }</string></property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelChecksAmount">
+       <property name="text"><string>Chèques : 0.00 €</string></property>
+       <property name="styleSheet"><string>QLabel { padding: 5px; color: #1976D2; }</string></property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelAncvAmount">
+       <property name="text"><string>ANCV : 0.00 €</string></property>
+       <property name="styleSheet"><string>QLabel { padding: 5px; color: #1976D2; }</string></property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation"><enum>Qt::Horizontal</enum></property>
+       <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QTableWidget" name="tableMembers">
      <column>
       <property name="text"><string>Nom</string></property>
@@ -64,6 +98,9 @@
      </column>
      <column>
       <property name="text"><string>Club MJC</string></property>
+     </column>
+     <column>
+      <property name="text"><string>Autres clubs MJC</string></property>
      </column>
      <column>
       <property name="text"><string>Statut cotisation</string></property>

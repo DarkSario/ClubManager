@@ -311,6 +311,9 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
                 # Récupérer les membres filtrés
                 members = get_filtered_members(filters)
                 
+                # Mettre à jour le résumé des paiements avec les membres filtrés
+                self.update_payment_summary(members)
+                
                 # Mettre à jour le tableau
                 self.tableMembers.setRowCount(0)
                 
@@ -424,6 +427,21 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
             "La fonctionnalité de mailing sera implémentée via l'onglet Mailing."
         )
 
+    def update_payment_summary(self, members):
+        """Met à jour les labels de résumé des paiements.
+        
+        Args:
+            members: Liste des membres à partir desquels calculer les totaux
+        """
+        from club_manager.core.utils import calculate_payment_totals, format_currency
+        
+        totals = calculate_payment_totals(members)
+        
+        self.labelTotalAmount.setText(f"Total général : {format_currency(totals['total'])}")
+        self.labelCashAmount.setText(f"Espèces : {format_currency(totals['cash'])}")
+        self.labelChecksAmount.setText(f"Chèques : {format_currency(totals['checks'])}")
+        self.labelAncvAmount.setText(f"ANCV : {format_currency(totals['ancv'])}")
+
     def refresh_members(self):
         """Recharge la table des membres depuis la base de données."""
         from club_manager.core.members import get_all_members
@@ -431,6 +449,9 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
         
         members = get_all_members()
         self.tableMembers.setRowCount(0)
+        
+        # Mettre à jour le résumé des paiements
+        self.update_payment_summary(members)
         
         for row_idx, member in enumerate(members):
             self.tableMembers.insertRow(row_idx)
