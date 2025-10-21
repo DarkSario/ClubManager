@@ -411,20 +411,28 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
         self.refresh_members()
 
     def do_mailing(self):
-        """Lance le module de mailing pour les membres sélectionnés."""
-        selected_items = self.tableMembers.selectedItems()
-        if not selected_items:
-            QtWidgets.QMessageBox.warning(
-                self,
-                "Aucune sélection",
-                "Veuillez sélectionner au moins un membre pour le mailing."
-            )
-            return
+        """Ouvre l'onglet Mailing."""
+        # Récupérer la fenêtre principale
+        main_window = self.window()
+        if hasattr(main_window, 'tabs'):
+            # Trouver l'index de l'onglet Mailing
+            for i in range(main_window.tabs.count()):
+                if main_window.tabs.tabText(i) == "Mailing":
+                    main_window.tabs.setCurrentIndex(i)
+                    QtWidgets.QMessageBox.information(
+                        self,
+                        "Mailing",
+                        "L'onglet Mailing a été ouvert.\n\n"
+                        "Utilisez le bouton 'Sélection destinataires' pour choisir les membres, "
+                        "puis configurez vos paramètres SMTP si ce n'est pas déjà fait."
+                    )
+                    return
         
         QtWidgets.QMessageBox.information(
             self,
             "Mailing",
-            "La fonctionnalité de mailing sera implémentée via l'onglet Mailing."
+            "Utilisez l'onglet Mailing pour envoyer des emails groupés.\n\n"
+            "Pensez à configurer les paramètres SMTP avant l'envoi."
         )
 
     def update_payment_summary(self, members):

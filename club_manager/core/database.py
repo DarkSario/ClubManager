@@ -99,6 +99,22 @@ class Database:
                 mjc_price REAL NOT NULL,
                 is_current INTEGER DEFAULT 0
             );
+            CREATE TABLE IF NOT EXISTS settings (
+                key TEXT PRIMARY KEY,
+                value TEXT,
+                updated_at TEXT
+            );
+            CREATE TABLE IF NOT EXISTS mailing_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                recipient_id INTEGER,
+                recipient_email TEXT,
+                subject TEXT,
+                status TEXT,
+                message_id TEXT,
+                error TEXT,
+                timestamp TEXT,
+                FOREIGN KEY(recipient_id) REFERENCES members(id)
+            );
         """)
         self.connection.commit()
         self.migrate_schema()

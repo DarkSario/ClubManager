@@ -9,7 +9,7 @@
      <item><widget class="QPushButton" name="buttonEditMember"><property name="text"><string>Modifier</string></property></widget></item>
      <item><widget class="QPushButton" name="buttonDeleteMember"><property name="text"><string>Supprimer</string></property></widget></item>
      <item><widget class="QPushButton" name="buttonExportMembers"><property name="text"><string>Exporter</string></property></widget></item>
-     <item><widget class="QPushButton" name="buttonMailing"><property name="text"><string>Mailing</string></property></widget></item>
+     <item><widget class="QPushButton" name="buttonMailing"><property name="text"><string>Ouvrir Mailing</string></property></widget></item>
     </layout>
    </item>
    <item>

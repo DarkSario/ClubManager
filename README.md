@@ -81,6 +81,7 @@ Si vous souhaitez reprendre certains membres de la saison précédente :
 - PyQt5
 - pandas
 - reportlab (pour les exports PDF)
+- cryptography (pour le chiffrement des mots de passe SMTP)
 - SQLite3 (généralement inclus avec Python)
 
 ### Installation des dépendances
@@ -229,18 +230,87 @@ Pour créer un export PDF professionnel :
    - Table formatée avec vos données
    - Total d'éléments exportés
 
-## Mailing groupé (Nouveau v2.3)
+## Mailing groupé
 
-### Utilisation avec champ Objet
+### Configuration SMTP
+
+Avant de pouvoir envoyer des emails, vous devez configurer les paramètres SMTP :
+
+1. Accédez à l'onglet **"Mailing"**
+2. Cliquez sur **"⚙ Configuration SMTP"**
+3. Remplissez les informations du serveur SMTP :
+   - **Hôte SMTP** : L'adresse de votre serveur SMTP (ex: `smtp.gmail.com`, `smtp.office365.com`)
+   - **Port** : Le port SMTP (587 pour STARTTLS, 465 pour SSL/TLS)
+   - **Sécurité** : Choisissez le type de sécurité (STARTTLS recommandé)
+   - **Nom d'utilisateur** : Votre identifiant SMTP
+   - **Mot de passe** : Votre mot de passe SMTP
+   - **Adresse email** : L'adresse email expéditeur
+   - **Nom expéditeur** : Le nom qui apparaîtra comme expéditeur
+   - **Répondre à** : Adresse pour les réponses (optionnel)
+
+4. Configurez les paramètres d'envoi :
+   - **Taille du lot** : Nombre d'emails envoyés par lot (défaut: 10)
+   - **Délai entre lots** : Temps d'attente entre chaque lot en ms (défaut: 1000ms)
+   - **Tentatives max** : Nombre de tentatives en cas d'échec (défaut: 2)
+   - **Logs d'envoi** : Activer pour tracer les envois dans la base
+
+5. Testez votre configuration :
+   - Cliquez sur **"Tester la connexion"** pour vérifier les paramètres
+   - Cliquez sur **"Envoyer un email de test"** pour recevoir un email de test
+
+6. Cliquez sur **"OK"** pour enregistrer
+
+#### Sécurité des mots de passe
+
+Les mots de passe SMTP sont chiffrés dans la base de données en utilisant la bibliothèque `cryptography` (Fernet).
+
+**Pour une sécurité maximale en production** :
+
+1. Définissez une variable d'environnement `APP_SECRET_KEY` avec une valeur unique et complexe :
+
+```bash
+# Linux/Mac
+export APP_SECRET_KEY="votre-clé-secrète-très-longue-et-complexe"
+
+# Windows
+set APP_SECRET_KEY=votre-clé-secrète-très-longue-et-complexe
+```
+
+2. Lancez l'application :
+
+```bash
+python -m club_manager.main
+```
+
+⚠️ **Important** : Sans cette variable d'environnement, une clé par défaut est utilisée. Cela convient pour les tests, mais **pas pour la production** où des données sensibles sont manipulées.
+
+### Utilisation du mailing groupé
 
 1. Accédez à l'onglet **"Mailing"**
 2. Cliquez sur **"Sélection destinataires"** pour choisir les membres
+   - Seuls les membres avec une adresse email sont affichés
+   - Vous pouvez sélectionner plusieurs membres
 3. Remplissez le champ **"Objet"** (obligatoire)
 4. Rédigez votre message dans le champ corps
 5. Cliquez sur **"Prévisualiser"** pour voir le rendu final
 6. Cliquez sur **"Envoyer"** pour envoyer le mail
+   - Une barre de progression affiche l'avancement de l'envoi
+   - Un rapport détaillé est affiché à la fin :
+     - Nombre d'emails envoyés avec succès
+     - Nombre d'échecs avec les détails des erreurs
 
-Note : La fonctionnalité d'envoi nécessite une configuration SMTP (à venir).
+### Fonctionnalités avancées
+
+- **Envoi par lots** : Les emails sont envoyés par lots pour éviter les limitations SMTP et réduire la charge serveur
+- **Retry automatique** : En cas d'échec temporaire, le système réessaye automatiquement
+- **Logs d'envoi** : Si activés, tous les envois sont enregistrés dans la table `mailing_logs` pour audit
+- **Protection des destinataires** : Chaque email est envoyé individuellement pour préserver la confidentialité
+
+### Depuis l'onglet Membres
+
+Le bouton **"Ouvrir Mailing"** dans l'onglet Membres vous redirige vers l'onglet Mailing où vous pouvez composer et envoyer vos emails.
+
+Note : La fonctionnalité d'envoi nécessite une configuration SMTP préalable.
 
 ## Conformité RGPD
 
@@ -263,6 +333,19 @@ Pour signaler un bug ou proposer une amélioration :
 Tous droits réservés.
 
 ## Historique des versions
+
+### Version 2.4 (Janvier 2025)
+- ✨ **Intégration SMTP complète** : Configuration et envoi d'emails via SMTP
+- ✨ **Mailing centralisé** : Interface complète de composition et d'envoi d'emails groupés
+- ✨ **Chiffrement des mots de passe** : Stockage sécurisé des credentials SMTP avec cryptography
+- ✨ **Envoi par lots** : Configuration des lots et délais pour respecter les limitations SMTP
+- ✨ **Retry automatique** : Tentatives automatiques en cas d'échec temporaire
+- ✨ **Logs d'envoi** : Traçabilité complète des emails envoyés
+- ✨ **Tests de configuration** : Test de connexion et envoi d'email de test
+- 📦 Nouvelle dépendance : cryptography pour le chiffrement
+- 🗄️ Nouvelles tables : settings, mailing_logs
+- 📝 Documentation complète dans CHANGELOG.md
+- ✅ Suite de tests unitaires pour le module SMTP
 
 ### Version 2.3 (Décembre 2024)
 - ✨ **Export/Import ZIP complet** : Sauvegarde et restauration complète avec barre de progression

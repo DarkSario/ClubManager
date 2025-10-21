@@ -113,7 +113,7 @@ class Ui_MembersTab(object):
         self.buttonEditMember.setText(_translate("MembersTab", "Modifier"))
         self.buttonDeleteMember.setText(_translate("MembersTab", "Supprimer"))
         self.buttonExportMembers.setText(_translate("MembersTab", "Exporter"))
-        self.buttonMailing.setText(_translate("MembersTab", "Mailing"))
+        self.buttonMailing.setText(_translate("MembersTab", "Ouvrir Mailing"))
         self.labelTotalAmount.setText(_translate("MembersTab", "Total général : 0.00 €"))
         self.labelTotalAmount.setStyleSheet(_translate("MembersTab", "QLabel { font-weight: bold; color: #2E7D32; padding: 5px; }"))
         self.labelCashAmount.setText(_translate("MembersTab", "Espèces : 0.00 €"))
