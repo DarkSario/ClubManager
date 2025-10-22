@@ -50,3 +50,6 @@ club_manager.conf
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Manual test scripts
+test_smtp_integration.py
