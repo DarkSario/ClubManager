@@ -34,7 +34,7 @@ class AuditTab(QtWidgets.QWidget, Ui_AuditTab):
         """Exporte le journal d'audit en CSV."""
         from club_manager.core.audit import get_all_audit_entries
         from club_manager.ui.csv_export_dialog import CSVExportDialog
-        from club_manager.core.exports import export_to_csv
+        from club_manager.core.export import export_to_csv
         
         try:
             entries = get_all_audit_entries()

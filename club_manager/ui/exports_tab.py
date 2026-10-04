@@ -27,7 +27,7 @@ class ExportsTab(QtWidgets.QWidget, Ui_ExportsTab):
         """Exporte les données sélectionnées en CSV."""
         from club_manager.core.members import get_all_members
         from club_manager.ui.csv_export_dialog import CSVExportDialog
-        from club_manager.core.exports import export_to_csv
+        from club_manager.core.export import export_to_csv
         
         # Demander quel type de données exporter
         choice, ok = QtWidgets.QInputDialog.getItem(

@@ -3,16 +3,32 @@
 Module central d'accès et gestion à la base SQLite du Club Manager.
 Responsable de l'initialisation, connexion, requêtes, migrations et transactions.
 """
+
 import sqlite3
 import threading
+from typing import Any, List, Optional, Sequence
+
+from club_manager.config import Config
+from club_manager.core.logger import get_logger
+from club_manager.core.migrations import MigrationManager
+
+logger = get_logger(__name__)
+
 
 class Database:
-    _instance = None
+    """Accès singleton (thread-safe) à la base SQLite active."""
+
+    _instance: Optional["Database"] = None
     _lock = threading.Lock()
-    _current_db_path = None
+    _current_db_path: Optional[str] = None
 
     @staticmethod
-    def instance(db_path=None):
+    def instance(db_path: Optional[str] = None) -> "Database":
+        """Retourne l'instance unique, en changeant de base si ``db_path`` diffère.
+
+        Args:
+            db_path: Chemin de la base (défaut : ``Config.default_db_path()``).
+        """
         with Database._lock:
             # Si un path est fourni et qu'il est différent, changer la base
             if db_path and Database._current_db_path != db_path:
@@ -22,13 +38,13 @@ class Database:
                 Database._current_db_path = db_path
             # Si aucun path n'est fourni et qu'il n'y a pas d'instance, utiliser le défaut
             elif Database._instance is None:
-                default_path = "club_manager.db"
+                default_path = Config.default_db_path()
                 Database._instance = Database(default_path)
                 Database._current_db_path = default_path
             return Database._instance
-    
+
     @staticmethod
-    def change_database(db_path):
+    def change_database(db_path: str) -> "Database":
         """Change la base de données active."""
         with Database._lock:
             if Database._instance is not None:
@@ -37,13 +53,20 @@ class Database:
             Database._current_db_path = db_path
             return Database._instance
 
-    def __init__(self, db_path):
+    def __init__(self, db_path: str) -> None:
+        """Ouvre la connexion et initialise le schéma.
+
+        Args:
+            db_path: Chemin du fichier SQLite.
+        """
+        logger.info("Ouverture de la base %s", db_path)
         self.db_path = db_path
         self.connection = sqlite3.connect(self.db_path, check_same_thread=False)
         self.connection.row_factory = sqlite3.Row
         self.setup_schema()
 
-    def setup_schema(self):
+    def setup_schema(self) -> None:
+        """Crée les tables manquantes puis applique les migrations."""
         cursor = self.connection.cursor()
         # Extrait simplifié, à compléter/migrer selon les évolutions métiers
         cursor.executescript("""
@@ -119,90 +142,42 @@ class Database:
         self.connection.commit()
         self.migrate_schema()
 
-    def migrate_schema(self):
+    def migrate_schema(self) -> None:
         """Migre le schéma de base de données pour les bases existantes."""
-        cursor = self.connection.cursor()
-        
-        # Vérifier si la table members existe
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='members'")
-        if not cursor.fetchone():
-            return  # Table n'existe pas encore, pas de migration nécessaire
-        
-        # Obtenir les colonnes actuelles de la table members
-        cursor.execute("PRAGMA table_info(members)")
-        columns = [row[1] for row in cursor.fetchall()]
-        
-        # Ajouter les nouveaux champs de paiement s'ils n'existent pas
-        if 'cash_amount' not in columns:
-            cursor.execute("ALTER TABLE members ADD COLUMN cash_amount REAL DEFAULT 0")
-        if 'check1_amount' not in columns:
-            cursor.execute("ALTER TABLE members ADD COLUMN check1_amount REAL DEFAULT 0")
-        if 'check2_amount' not in columns:
-            cursor.execute("ALTER TABLE members ADD COLUMN check2_amount REAL DEFAULT 0")
-        if 'check3_amount' not in columns:
-            cursor.execute("ALTER TABLE members ADD COLUMN check3_amount REAL DEFAULT 0")
-        if 'total_paid' not in columns:
-            cursor.execute("ALTER TABLE members ADD COLUMN total_paid REAL DEFAULT 0")
-        if 'birth_date' not in columns:
-            cursor.execute("ALTER TABLE members ADD COLUMN birth_date TEXT")
-        if 'other_mjc_clubs' not in columns:
-            cursor.execute("ALTER TABLE members ADD COLUMN other_mjc_clubs TEXT")
-        
-        # SQLite ne supporte pas DROP COLUMN directement avant version 3.35.0
-        # On va créer une nouvelle table et copier les données
-        if 'health' in columns or 'external_club' in columns:
-            # Créer une nouvelle table temporaire sans les champs obsolètes
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS members_new (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    last_name TEXT, first_name TEXT, address TEXT, postal_code TEXT, city TEXT,
-                    phone TEXT, mail TEXT, rgpd INTEGER, image_rights INTEGER,
-                    payment_type TEXT,
-                    ancv_amount REAL,
-                    cash_amount REAL DEFAULT 0,
-                    check1_amount REAL DEFAULT 0,
-                    check2_amount REAL DEFAULT 0,
-                    check3_amount REAL DEFAULT 0,
-                    total_paid REAL DEFAULT 0,
-                    mjc_club_id INTEGER,
-                    cotisation_status TEXT,
-                    birth_date TEXT,
-                    other_mjc_clubs TEXT,
-                    FOREIGN KEY(mjc_club_id) REFERENCES mjc_clubs(id)
-                )
-            """)
-            
-            # Copier les données (en excluant les colonnes obsolètes)
-            common_columns = [col for col in columns if col not in ['health', 'external_club']]
-            # Filtrer pour ne garder que les colonnes qui existent dans la nouvelle table
-            new_table_columns = ['id', 'last_name', 'first_name', 'address', 'postal_code', 'city',
-                                'phone', 'mail', 'rgpd', 'image_rights', 'payment_type', 
-                                'ancv_amount', 'cash_amount', 'check1_amount', 'check2_amount', 
-                                'check3_amount', 'total_paid', 'mjc_club_id', 'cotisation_status', 'birth_date', 'other_mjc_clubs']
-            columns_to_copy = [col for col in common_columns if col in new_table_columns]
-            
-            if columns_to_copy:
-                columns_str = ', '.join(columns_to_copy)
-                cursor.execute(f"INSERT INTO members_new ({columns_str}) SELECT {columns_str} FROM members")
-                
-                # Remplacer l'ancienne table par la nouvelle
-                cursor.execute("DROP TABLE members")
-                cursor.execute("ALTER TABLE members_new RENAME TO members")
-        
-        self.connection.commit()
+        MigrationManager(self.connection).migrate()
 
-    def execute(self, sql, params=None):
+    def execute(self, sql: str, params: Optional[Sequence[Any]] = None) -> sqlite3.Cursor:
+        """Exécute une requête d'écriture et valide la transaction.
+
+        Args:
+            sql: Requête SQL.
+            params: Paramètres de la requête.
+
+        Returns:
+            Le curseur résultant.
+        """
         cursor = self.connection.cursor()
         cursor.execute(sql, params or [])
         self.connection.commit()
         return cursor
 
-    def query(self, sql, params=None):
+    def query(self, sql: str, params: Optional[Sequence[Any]] = None) -> List[sqlite3.Row]:
+        """Exécute une requête de lecture.
+
+        Args:
+            sql: Requête SQL.
+            params: Paramètres de la requête.
+
+        Returns:
+            La liste des lignes.
+        """
         cursor = self.connection.cursor()
         cursor.execute(sql, params or [])
         return cursor.fetchall()
 
-    def close(self):
+    def close(self) -> None:
+        """Ferme la connexion et réinitialise le singleton."""
+        logger.info("Fermeture de la base %s", self.db_path)
         self.connection.close()
         Database._instance = None
         Database._current_db_path = None

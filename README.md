@@ -108,6 +108,13 @@ Ou depuis le répertoire du projet :
 python club_manager/main.py
 ```
 
+## Configuration, logs et développement
+
+- Configuration par variables d'environnement ou fichier `.env` (voir `.env.example`, classe `club_manager/config.py`).
+- Logs : `~/.clubmanager/logs/clubmanager.log` (rotation automatique).
+- Tests : `pip install -r requirements-dev.txt && pytest`.
+- Voir [ARCHITECTURE.md](ARCHITECTURE.md), [DEVELOPMENT.md](DEVELOPMENT.md) et [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Utilisation
 
 ### Gestion des membres

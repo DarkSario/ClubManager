@@ -1,0 +1,12 @@
+[MASTER]
+ignore-patterns=.*_ui\.py
+
+[MESSAGES CONTROL]
+disable=missing-module-docstring,too-few-public-methods,too-many-arguments,too-many-locals,
+        too-many-statements,too-many-branches,broad-except,broad-exception-caught,
+        invalid-name,line-too-long,import-outside-toplevel,logging-fstring-interpolation,
+        no-name-in-module,import-error,too-many-instance-attributes,trailing-whitespace,
+        wrong-import-position,duplicate-code,unused-argument,too-many-positional-arguments,missing-function-docstring,protected-access,global-statement,no-else-continue,wrong-import-order
+
+[FORMAT]
+max-line-length=120

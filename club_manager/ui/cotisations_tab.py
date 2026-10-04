@@ -212,7 +212,7 @@ class CotisationsTab(QtWidgets.QWidget, Ui_CotisationsTab):
         """Exporte la liste des cotisations en CSV."""
         from club_manager.core.cotisations import get_all_cotisations
         from club_manager.ui.csv_export_dialog import CSVExportDialog
-        from club_manager.core.exports import export_to_csv
+        from club_manager.core.export import export_to_csv
         
         try:
             cotisations = get_all_cotisations()

@@ -8,6 +8,7 @@ import zipfile
 import tempfile
 from PyQt5.QtWidgets import QFileDialog, QMessageBox, QProgressDialog
 from PyQt5.QtCore import Qt
+from club_manager.config import Config
 
 def backup_database(db_path, parent=None):
     fname, _ = QFileDialog.getSaveFileName(parent, "Exporter la sauvegarde", "", "Fichier ZIP (*.zip)")
@@ -70,7 +71,7 @@ def export_zip_archive(parent=None):
             progress.setValue(60)
             
             # Ajouter les fichiers de configuration s'ils existent
-            config_dir = os.path.expanduser('~/.clubmanager')
+            config_dir = Config.data_dir()
             if os.path.exists(config_dir):
                 config_file = os.path.join(config_dir, 'config.json')
                 if os.path.exists(config_file):
@@ -140,7 +141,7 @@ def import_zip_archive(parent=None):
             save_path, _ = QFileDialog.getSaveFileName(
                 parent,
                 "Enregistrer la base importée",
-                os.path.expanduser(f"~/.clubmanager/{db_file}"),
+                os.path.join(Config.data_dir(), db_file),
                 "Fichier de base de données (*.db)"
             )
             
@@ -162,7 +163,7 @@ def import_zip_archive(parent=None):
             # Restaurer le fichier de config s'il existe dans l'archive
             config_file = os.path.join(temp_dir, 'config.json')
             if os.path.exists(config_file):
-                config_dir = os.path.expanduser('~/.clubmanager')
+                config_dir = Config.data_dir()
                 os.makedirs(config_dir, exist_ok=True)
                 # Ne pas écraser le config actuel, seulement si confirmé
                 reply = QMessageBox.question(

@@ -167,7 +167,7 @@ class CustomFieldsTab(QtWidgets.QWidget, Ui_CustomFieldsTab):
         """Exporte la liste des champs personnalisés en CSV."""
         from club_manager.core.custom_fields import get_all_custom_fields
         from club_manager.ui.csv_export_dialog import CSVExportDialog
-        from club_manager.core.exports import export_to_csv
+        from club_manager.core.export import export_to_csv
         
         try:
             fields = get_all_custom_fields()

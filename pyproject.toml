@@ -1,0 +1,17 @@
+[tool.black]
+line-length = 120
+target-version = ["py38"]
+extend-exclude = '''
+(_ui\.py$)
+'''
+
+[tool.mypy]
+explicit_package_bases = true
+namespace_packages = true
+ignore_missing_imports = true
+check_untyped_defs = false
+files = ["club_manager/config.py", "club_manager/core/logger.py", "club_manager/core/migrations.py", "club_manager/core/database.py", "club_manager/core/smtp_util.py", "club_manager/core/members.py", "club_manager/core/export.py"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=club_manager --cov-report=term-missing"
