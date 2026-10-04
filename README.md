@@ -77,7 +77,7 @@ Si vous souhaitez reprendre certains membres de la saison précédente :
 
 ### Prérequis
 
-- Python 3.8 ou supérieur
+- Python 3.9 ou supérieur
 - PyQt5
 - pandas
 - reportlab (pour les exports PDF)
@@ -107,6 +107,33 @@ Ou depuis le répertoire du projet :
 ```bash
 python club_manager/main.py
 ```
+
+## Variables d'environnement et fichier `.env`
+
+Copiez `.env.example` en `.env` (à la racine du projet) puis adaptez les valeurs :
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Rôle | Valeur par défaut |
+|----------|------|-------------------|
+| `CLUBMANAGER_DATA_DIR` | Répertoire de données | `~/.clubmanager` |
+| `CLUBMANAGER_LOG_DIR` | Répertoire des logs (`clubmanager.log`) | `<CLUBMANAGER_DATA_DIR>/logs` |
+| `CLUBMANAGER_LOG_LEVEL` | Niveau de log (`DEBUG`, `INFO`, `WARNING`, `ERROR`) | `INFO` |
+| `CLUBMANAGER_DB_PATH` | Base utilisée quand aucune n'est sélectionnée | `club_manager.db` |
+| `APP_SECRET_KEY` | Clé de chiffrement du mot de passe SMTP | non définie (clé par défaut non sécurisée, avertissement) |
+
+**Ordre de précédence** : variable d'environnement > fichier `.env` > valeur par défaut.
+
+Générer une clé secrète robuste :
+
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(48))"
+```
+
+⚠️ Ne committez **jamais** votre fichier `.env` (il est ignoré par Git) : il contient des secrets.
+Définissez `APP_SECRET_KEY` **avant** d'enregistrer (ou ré-enregistrer) la configuration SMTP.
 
 ## Configuration, logs et développement
 

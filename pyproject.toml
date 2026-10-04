@@ -1,11 +1,12 @@
 [tool.black]
 line-length = 120
-target-version = ["py38"]
+target-version = ["py39", "py310", "py311", "py312"]
 extend-exclude = '''
 (_ui\.py$)
 '''
 
 [tool.mypy]
+python_version = "3.9"
 explicit_package_bases = true
 namespace_packages = true
 ignore_missing_imports = true
@@ -14,4 +15,5 @@ files = ["club_manager/config.py", "club_manager/core/logger.py", "club_manager/
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov=club_manager --cov-report=term-missing"
+addopts = "--cov=club_manager/core --cov-report=term-missing"
+markers = ["ui: tests d'interface PyQt5 (QT_QPA_PLATFORM=offscreen)"]

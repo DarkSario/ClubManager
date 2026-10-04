@@ -53,6 +53,11 @@ class Database:
             Database._current_db_path = db_path
             return Database._instance
 
+    @staticmethod
+    def get_current_db_path() -> Optional[str]:
+        """Retourne le chemin de la base active (None si aucune)."""
+        return Database._current_db_path
+
     def __init__(self, db_path: str) -> None:
         """Ouvre la connexion et initialise le schéma.
 

@@ -8,8 +8,13 @@ import sys
 from PyQt5.QtWidgets import QApplication
 from club_manager.main_window import MainWindow
 from club_manager.ui.database_selector_dialog import DatabaseSelectorDialog
+from club_manager.core.logger import get_logger
+
+APP_VERSION = "2.5.0"
+logger = get_logger(__name__)
 
 def main():
+    logger.info("Démarrage de Club Manager %s", APP_VERSION)
     app = QApplication(sys.argv)
     app.setApplicationName("Club Manager")
     app.setOrganizationName("DarkSario")
@@ -30,6 +35,7 @@ def main():
     from club_manager.core.annual_prices import get_current_annual_price
     
     db = Database.instance(db_path)
+    logger.info("Base ouverte: %s", db_path)
     
     # Vérifier si des tarifs existent déjà
     current_price = get_current_annual_price()

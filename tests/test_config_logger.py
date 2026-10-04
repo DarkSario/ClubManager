@@ -27,9 +27,11 @@ def test_config_defaults(monkeypatch):
 
 
 def test_logger_writes_file(tmp_path, monkeypatch):
+    monkeypatch.setenv("CLUBMANAGER_LOG_DIR", str(tmp_path / "logs"))
     monkeypatch.setattr(logmod, "_configured", False)
     root = logmod.logging.getLogger(logmod.LOGGER_NAME)
     old = list(root.handlers)
+    old_level = root.level
     try:
         log = logmod.get_logger("club_manager.core.demo")
         assert log.name == "clubmanager.demo"
@@ -39,6 +41,7 @@ def test_logger_writes_file(tmp_path, monkeypatch):
         content = (tmp_path / "logs" / "clubmanager.log").read_text(encoding="utf-8")
         assert "hello" in content
     finally:
+        root.setLevel(old_level)
         for h in list(root.handlers):
             if h not in old:
                 root.removeHandler(h)

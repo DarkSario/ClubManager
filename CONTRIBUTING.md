@@ -1,4 +1,5 @@
 # Contribuer à Club Manager
+> Python 3.9 ou supérieur est requis (3.9–3.12 testés en CI).
 
 1. Forkez le dépôt et créez une branche (`feature/ma-fonctionnalite`).
 2. Installez les dépendances de développement : `pip install -r requirements-dev.txt`.

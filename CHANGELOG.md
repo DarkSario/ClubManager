@@ -1,5 +1,48 @@
 # Historique des versions - Club Manager
 
+## Version 2.5.0
+
+### Ce qui change
+
+- **Tests & CI** : suite pytest (unitaires, `tests/integration/`, UI PyQt5 marker `ui` en mode headless), couverture
+  ≥ 70 % sur `club_manager/core/` (seuil CI), workflows GitHub Actions `tests.yml` et `release.yml`
+  (déclenchables via `workflow_dispatch`, mode *dry-run* pour la release, `contents: write` limité au job de publication).
+- **Logging centralisé** (rotation) dans `<CLUBMANAGER_LOG_DIR>/clubmanager.log`, initialisé au démarrage
+  (version de l'application et base ouverte journalisées). Plus de `print()` dans `club_manager/core/`.
+- **Configuration** via `Config` et fichier `.env` (voir `.env.example`, README et DEVELOPMENT.md).
+- **Migrations** : version du schéma dans `PRAGMA user_version`, chaque migration est **atomique**
+  (`BEGIN`/`COMMIT`/`ROLLBACK`, `user_version` mis à jour dans la même transaction). En cas d'échec : rollback complet,
+  `user_version` inchangé, erreur journalisée puis relancée.
+- **Fusion `exports.py` → `export.py`**.
+- **Validation stricte** des colonnes (`add_member`/`update_member`) et des clés de filtre
+  (`get_filtered_members` lève `ValueError` pour une clé inconnue).
+- **SMTP** : avertissement (log + message dans la fenêtre de configuration SMTP) si `APP_SECRET_KEY` n'est pas défini ;
+  les mots de passe chiffrés avec l'ancienne clé par défaut restent lisibles.
+- **Python 3.9+** requis (3.9 à 3.12 testés ; 3.8 n'est plus supporté).
+- Corrections : `purge_rgpd` ne référence plus les colonnes supprimées (`health`, `external_club`, `mjc_elsewhere`) ;
+  ajout de `Database.get_current_db_path()` utilisé par l'export ZIP.
+
+### Guide d'upgrade
+
+1. **Sauvegardez** vos bases (`*.db`, dossier `~/.clubmanager`) avant la mise à jour.
+2. Utilisez **Python 3.9 ou supérieur**, puis installez les dépendances : `pip install -r requirements.txt`
+   (développement : `pip install -r requirements-dev.txt`).
+3. Copiez `.env.example` en `.env` si besoin et **définissez `APP_SECRET_KEY`** *avant* de ré-enregistrer la
+   configuration SMTP (`python -c "import secrets; print(secrets.token_urlsafe(48))"`). Tant que la clé n'est pas
+   définie, la clé par défaut (non sécurisée) est utilisée. Si vous définissez la clé après coup, l'ancien mot de passe
+   reste lisible ; ré-enregistrez la configuration SMTP pour le rechiffrer avec la nouvelle clé.
+4. Lancez l'application : les **migrations s'appliquent automatiquement** à l'ouverture de chaque base.
+5. Remplacez les imports `club_manager.core.exports` par `club_manager.core.export`.
+
+### Points de rupture possibles
+
+- Python 3.8 n'est plus supporté.
+- `club_manager.core.exports` n'existe plus (utiliser `club_manager.core.export`).
+- `get_filtered_members` lève `ValueError` pour une clé inconnue (auparavant ignorée silencieusement) ;
+  clés autorisées : `last_name`, `first_name`, `city`, `mail`, `cotisation_status`, `payment_type`, `rgpd`, `image_rights`.
+- `add_member`/`update_member` lèvent `ValueError` pour une colonne inconnue.
+- Les colonnes `health` et `external_club` sont supprimées de `members` (migration 3).
+
 ## Version 2.4 (En cours)
 
 ### 🚀 Nouvelles fonctionnalités

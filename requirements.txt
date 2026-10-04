@@ -1,3 +1,5 @@
+# PyQt5 est épinglé exactement : les roues 5.15.11 sont les dernières publiées pour 5.15.x
+# (série en fin de vie) et fonctionnent sur Python 3.9–3.12 ; une plage risquerait de tirer un build non testé.
 PyQt5==5.15.11
 pandas>=2.0,<4.0
 reportlab>=4.0,<6.0
