@@ -11,7 +11,7 @@ def purge_rgpd():
     db.execute("""
         UPDATE members
         SET last_name='ANONYMISE', first_name='ANONYMISE', address='', postal_code='', city='',
-            phone='', mail='', health='', external_club='', mjc_elsewhere=''
+            phone='', mail=''
         WHERE id IN (
             SELECT m.id
             FROM members m

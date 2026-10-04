@@ -30,6 +30,18 @@ class TestSMTPConfig(unittest.TestCase):
         decrypted = SMTPConfig.decrypt_password(encrypted)
         self.assertEqual(decrypted, password)
 
+    def test_legacy_default_key_still_decrypts(self):
+        """Un mot de passe chiffré avec l'ancienne clé par défaut reste lisible après définition de APP_SECRET_KEY."""
+        with patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("APP_SECRET_KEY", None)
+            self.assertTrue(SMTPConfig.is_using_default_key())
+            encrypted = SMTPConfig.encrypt_password("old-secret")
+        with patch.dict(os.environ, {"APP_SECRET_KEY": "nouvelle-cle"}):
+            self.assertFalse(SMTPConfig.is_using_default_key())
+            self.assertEqual(SMTPConfig.decrypt_password(encrypted), "old-secret")
+            with self.assertRaises(Exception):
+                SMTPConfig.decrypt_password("pas-un-token")
+
     def test_config_creation(self):
         """Test de création d'une configuration SMTP."""
         config = SMTPConfig(

@@ -18,6 +18,15 @@ class SMTPSettingsDialog(QtWidgets.QDialog):
         
         self.setup_ui()
         self.load_settings()
+        if SMTPConfig.is_using_default_key():
+            warning = QtWidgets.QLabel(
+                "⚠ APP_SECRET_KEY n'est pas défini : le mot de passe SMTP est chiffré avec une clé par défaut "
+                "non sécurisée. Définissez APP_SECRET_KEY (voir README) puis ré-enregistrez cette configuration."
+            )
+            warning.setWordWrap(True)
+            warning.setObjectName("secretKeyWarning")
+            warning.setStyleSheet("color: #b45309;")
+            self.layout().insertWidget(0, warning)
     
     def setup_ui(self):
         """Configure l'interface utilisateur."""

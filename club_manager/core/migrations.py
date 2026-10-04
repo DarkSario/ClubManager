@@ -136,6 +136,30 @@ class MigrationManager:
         row = self.connection.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='members'").fetchone()
         return row is not None
 
+    def _apply(self, version: int) -> None:
+        """Applique une migration dans une transaction explicite (tout ou rien).
+
+        ``isolation_level`` est mis à ``None`` le temps de la migration pour empêcher
+        les commits implicites du module ``sqlite3`` avant le DDL, puis restauré.
+        """
+        conn = self.connection
+        conn.commit()
+        previous = conn.isolation_level
+        conn.isolation_level = None
+        try:
+            conn.execute("BEGIN")
+            try:
+                MIGRATIONS[version](conn)
+                conn.execute(f"PRAGMA user_version = {int(version)}")
+                conn.execute("COMMIT")
+            except Exception:
+                if conn.in_transaction:
+                    conn.execute("ROLLBACK")
+                logger.exception("Échec de la migration %d, annulation complète", version)
+                raise
+        finally:
+            conn.isolation_level = previous
+
     def migrate(self) -> int:
         """Applique les migrations en attente.
 
@@ -149,13 +173,6 @@ class MigrationManager:
             if version <= self.current_version():
                 continue
             logger.info("Application de la migration %d", version)
-            try:
-                MIGRATIONS[version](self.connection)
-                self.connection.execute(f"PRAGMA user_version = {int(version)}")
-                self.connection.commit()
-            except sqlite3.Error:
-                self.connection.rollback()
-                logger.exception("Échec de la migration %d", version)
-                raise
+            self._apply(version)
             applied += 1
         return applied

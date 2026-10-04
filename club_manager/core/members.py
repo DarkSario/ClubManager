@@ -36,6 +36,12 @@ MEMBER_COLUMNS = {
     "other_mjc_clubs",
 }
 
+# Clés autorisées pour get_filtered_members
+TEXT_FILTERS = ("last_name", "first_name", "city", "mail")
+EXACT_FILTERS = ("cotisation_status", "payment_type")
+BOOLEAN_FILTERS = ("rgpd", "image_rights")
+ALLOWED_FILTERS = frozenset(TEXT_FILTERS + EXACT_FILTERS + BOOLEAN_FILTERS)
+
 
 def _check_columns(fields: Dict[str, Any]) -> None:
     unknown = set(fields) - MEMBER_COLUMNS
@@ -111,7 +117,15 @@ def get_filtered_members(filters: Optional[Dict[str, Any]]) -> List[sqlite3.Row]
 
     Returns:
         list: Liste des membres correspondant aux critères
+
+    Raises:
+        ValueError: Si une clé de filtre n'est pas autorisée.
     """
+    unknown = set(filters or {}) - ALLOWED_FILTERS
+    if unknown:
+        raise ValueError(
+            f"Filtres inconnus: {', '.join(sorted(unknown))}. Filtres autorisés: {', '.join(sorted(ALLOWED_FILTERS))}"
+        )
     if not filters:
         return get_all_members()
 
@@ -122,15 +136,13 @@ def get_filtered_members(filters: Optional[Dict[str, Any]]) -> List[sqlite3.Row]
     params = []
 
     # Filtres texte avec recherche partielle (LIKE)
-    text_filters = ["last_name", "first_name", "city", "mail"]
-    for field in text_filters:
+    for field in TEXT_FILTERS:
         if field in filters:
             where_clauses.append(f"{field} LIKE ?")
             params.append(f"%{filters[field]}%")
 
     # Filtres exacts
-    exact_filters = ["cotisation_status", "payment_type", "rgpd", "image_rights"]
-    for field in exact_filters:
+    for field in EXACT_FILTERS + BOOLEAN_FILTERS:
         if field in filters:
             where_clauses.append(f"{field} = ?")
             params.append(filters[field])

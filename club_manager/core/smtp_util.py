@@ -9,13 +9,16 @@ import time
 from email.message import EmailMessage
 import re
 from typing import Any, Callable, List, Dict, Optional, Tuple, Union
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, InvalidToken
 import base64
 import hashlib
 from club_manager.config import Config
 from club_manager.core.logger import get_logger
 
 logger = get_logger(__name__)
+
+# Ancienne clé par défaut, conservée pour déchiffrer les mots de passe déjà enregistrés
+LEGACY_DEFAULT_SECRET = "default-club-manager-key-change-in-production"
 
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
@@ -58,15 +61,26 @@ class SMTPConfig:
         self.enable_logging = enable_logging
 
     @staticmethod
+    def is_using_default_key() -> bool:
+        """Indique si la clé par défaut (non sécurisée) est utilisée (APP_SECRET_KEY absent)."""
+        return not Config.secret_key()
+
+    @staticmethod
+    def _derive_key(secret: str) -> bytes:
+        # Dériver une clé Fernet valide (32 bytes base64) depuis le secret
+        return base64.urlsafe_b64encode(hashlib.sha256(secret.encode()).digest())
+
+    @staticmethod
     def get_encryption_key() -> bytes:
-        """Récupère ou génère une clé de chiffrement basée sur APP_SECRET_KEY."""
+        """Récupère la clé de chiffrement basée sur APP_SECRET_KEY (clé par défaut sinon, avec avertissement)."""
         secret = Config.secret_key()
         if not secret:
-            logger.warning("APP_SECRET_KEY non défini: clé de chiffrement par défaut utilisée")
-            secret = "default-club-manager-key-change-in-production"
-        # Dériver une clé Fernet valide (32 bytes base64) depuis le secret
-        key = hashlib.sha256(secret.encode()).digest()
-        return base64.urlsafe_b64encode(key)
+            logger.warning(
+                "APP_SECRET_KEY non défini: clé de chiffrement par défaut (non sécurisée) utilisée. "
+                "Définissez APP_SECRET_KEY puis ré-enregistrez la configuration SMTP."
+            )
+            secret = LEGACY_DEFAULT_SECRET
+        return SMTPConfig._derive_key(secret)
 
     @staticmethod
     def encrypt_password(password: str) -> str:
@@ -77,10 +91,24 @@ class SMTPConfig:
 
     @staticmethod
     def decrypt_password(encrypted: str) -> str:
-        """Déchiffre un mot de passe."""
+        """Déchiffre un mot de passe.
+
+        Si la clé courante échoue, essaie l'ancienne clé par défaut (compatibilité)
+        et avertit qu'il faut ré-enregistrer la configuration.
+        """
         key = SMTPConfig.get_encryption_key()
-        f = Fernet(key)
-        return f.decrypt(encrypted.encode()).decode()
+        try:
+            return Fernet(key).decrypt(encrypted.encode()).decode()
+        except InvalidToken:
+            legacy = SMTPConfig._derive_key(LEGACY_DEFAULT_SECRET)
+            if legacy == key:
+                raise
+            value = Fernet(legacy).decrypt(encrypted.encode()).decode()
+            logger.warning(
+                "Mot de passe SMTP chiffré avec l'ancienne clé par défaut: ré-enregistrez la configuration SMTP "
+                "pour le chiffrer avec APP_SECRET_KEY"
+            )
+            return value
 
 
 class SMTPSender:

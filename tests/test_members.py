@@ -53,3 +53,39 @@ def test_unknown_column_rejected(db):
     _add()
     with pytest.raises(ValueError):
         members.update_member(1, bogus="x")
+
+
+def test_filtered_no_filters_returns_all(db):
+    _add()
+    _add("Martin", "Paul")
+    assert len(members.get_filtered_members(None)) == 2
+    assert len(members.get_filtered_members({})) == 2
+
+
+def test_filtered_valid_keys(db):
+    _add("Dupont", "Jean", city="Lyon", rgpd=1, cotisation_status="Payé")
+    _add("Martin", "Paul", city="Paris", rgpd=0, cotisation_status="Impayé")
+    assert len(members.get_filtered_members({"last_name": "dup"})) == 1
+    assert len(members.get_filtered_members({"city": "ri", "rgpd": 0})) == 1
+    assert len(members.get_filtered_members({"cotisation_status": "Payé", "rgpd": 0})) == 0
+    for key in members.ALLOWED_FILTERS:
+        members.get_filtered_members({key: "x"})
+
+
+def test_filtered_unknown_key_raises(db):
+    _add()
+    with pytest.raises(ValueError) as exc:
+        members.get_filtered_members({"last_nam": "Dupont", "bogus": 1})
+    message = str(exc.value)
+    assert "bogus" in message and "last_nam" in message
+    assert "last_name" in message  # liste des clés autorisées
+
+
+def test_ui_filter_keys_are_allowed():
+    import inspect
+    import re
+
+    from club_manager.ui import member_filter_dialog
+
+    keys = set(re.findall(r"filters\['(\w+)'\]", inspect.getsource(member_filter_dialog)))
+    assert keys and keys <= members.ALLOWED_FILTERS
