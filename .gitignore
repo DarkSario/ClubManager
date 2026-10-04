@@ -53,3 +53,12 @@ htmlcov/
 
 # Manual test scripts
 test_smtp_integration.py
+
+# Environnement / outils
+.env
+.mypy_cache/
+.pylint.d/
+coverage.xml
+*.log
+.venv/
+venv/

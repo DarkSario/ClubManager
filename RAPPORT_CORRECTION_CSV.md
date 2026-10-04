@@ -147,6 +147,6 @@ ID,Nom,Prénom,Adresse,Ville,Téléphone,Email,Consentement RGPD,Droit à l'imag
 ## Fichiers Modifiés
 
 1. **Nouveau fichier** : `club_manager/ui/csv_export_dialog.py` - Dialogue de configuration
-2. **Amélioré** : `club_manager/core/exports.py` - Fonction centralisée d'export
+2. **Amélioré** : `club_manager/core/export.py` - Fonction centralisée d'export
 3. **Mis à jour** : 6 fichiers UI (exports_tab, members_tab, positions_tab, cotisations_tab, audit_tab, custom_fields_tab)
 4. **Ajouté** : `GUIDE_EXPORT_CSV.md` - Documentation utilisateur

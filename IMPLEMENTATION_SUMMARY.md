@@ -23,7 +23,7 @@ CSV export generated files where all data was in the first column (separator not
 ## 🎯 Solution Delivered
 
 ### 1. Centralized CSV Export Function
-**File:** `club_manager/core/exports.py`
+**File:** `club_manager/core/export.py`
 
 ```python
 def export_to_csv(data, file_path, delimiter=';', add_bom=False, 

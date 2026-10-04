@@ -232,7 +232,7 @@ class MembersTab(QtWidgets.QWidget, Ui_MembersTab):
         """Exporte la liste des membres en CSV."""
         from club_manager.core.members import get_all_members
         from club_manager.ui.csv_export_dialog import CSVExportDialog
-        from club_manager.core.exports import export_to_csv
+        from club_manager.core.export import export_to_csv
         
         try:
             members = get_all_members()

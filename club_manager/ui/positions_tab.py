@@ -153,7 +153,7 @@ class PositionsTab(QtWidgets.QWidget, Ui_PositionsTab):
         """Exporte la liste des postes en CSV."""
         from club_manager.core.positions import get_all_positions
         from club_manager.ui.csv_export_dialog import CSVExportDialog
-        from club_manager.core.exports import export_to_csv
+        from club_manager.core.export import export_to_csv
         
         try:
             positions = get_all_positions()

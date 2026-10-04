@@ -8,6 +8,7 @@ Permet de lister les bases existantes, en ouvrir une, ou en créer une nouvelle.
 import os
 import json
 from PyQt5 import QtWidgets
+from club_manager.config import Config
 from club_manager.ui.database_selector_dialog_ui import Ui_DatabaseSelectorDialog
 
 class DatabaseSelectorDialog(QtWidgets.QDialog, Ui_DatabaseSelectorDialog):
@@ -36,11 +37,7 @@ class DatabaseSelectorDialog(QtWidgets.QDialog, Ui_DatabaseSelectorDialog):
     
     def get_app_data_dir(self):
         """Retourne le répertoire de données de l'application."""
-        home = os.path.expanduser("~")
-        app_dir = os.path.join(home, ".clubmanager")
-        if not os.path.exists(app_dir):
-            os.makedirs(app_dir)
-        return app_dir
+        return Config.data_dir(create=True)
     
     def get_config_file(self):
         """Retourne le chemin du fichier de configuration."""
