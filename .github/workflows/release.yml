@@ -35,7 +35,7 @@ jobs:
       - name: Build source archive
         shell: bash
         run: git archive --format=zip --prefix=ClubManager/ -o "ClubManager-${GITHUB_REF_NAME//\//-}.zip" HEAD
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4.6.2
         with:
           name: source-archive
           path: ClubManager-*.zip
@@ -47,7 +47,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4.3.0
         with:
           name: source-archive
       - name: Create GitHub release
